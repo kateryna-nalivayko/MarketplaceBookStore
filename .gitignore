@@ -1,0 +1,42 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# Django
+*.log
+*.pot
+*.pyc
+*.mo
+*.pyo
+*.pyd
+__pycache__/
+local_settings.py
+
+# Environment variables
+.env
+
+# Database
+db.sqlite3
+db.sqlite3-journal
+
+# Media
+/media
+
+# Static files
+/static
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
