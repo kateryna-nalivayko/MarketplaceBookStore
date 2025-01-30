@@ -1,11 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-</head>
-<body>{{ bodyh1 }}</h1>
-    <p>{{ bodyp }}</p>
-</body>
-</html>
+{% extends "include/base.html" %}
+{% load static %}
+{% load books_tags %}
+
+{% block css %}
+{% endblock css %}
+
+    {% block content %}
+    <section class="hero is-medium is-danger">
+        <div class="hero-body">
+          <p class="title">{{ bodyh1 }}</p>
+          <p class="subtitle">{{ bodyp }}</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">Обери те, що тобі довподоби (nock, nock)</h1>
+            <div class="columns is-multiline">
+    
+                {% tag_categories 'all' as category_context %}
+                 {% if category_context.parent_category %}
+                <div class="column is-one-third">
+                    <div class="box has-text-centered">
+                        <a href="#}">
+                            <h2 class="subtitle">{{ category_context.parent_category.name }}</h2>
+                        </a>
+                    </div>
+                </div>        
+    
+                {% for category in category_context.immediate_children %}
+                 <div class="column is-one-third">
+                    <div class="box has-text-centered">
+                        <a href="#">
+                            <h2 class="subtitle">{{ category.name }}</h2>
+                        </a>
+                    </div>
+                </div>               
+                {% endfor %}
+                {% endif %}
+    
+            </div>
+        </div>
+    </section>
+    {% endblock content %}

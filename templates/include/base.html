@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static "deps/js/bulma/bulma.min.css" %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static "deps/css/my_css.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+    {% block css %}{% endblock css %}
+</head>
+<body>
+
+    <header>
+        <nav class="navbar is-spaced is-light" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="{% url "main:index" %}">
+                    <p class="has-text-ling is-size-4"><strong>Книга</strong></p>
+                </a>
+    
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                    data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+    
+            <div id="navbarBasicExample" class="navbar-menu mx-3">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Каталог
+                    </a>
+    
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="">
+                            Всі книги
+                        </a>
+                        <a class="navbar-item" href="">
+                            Класична література
+                        </a>
+                        <a class="navbar-item" href="">
+                            Сучасна література 
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="">
+                            Детективи 
+                        </a>
+                    </div>
+                </div>
+    
+    
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Дізнатись більше
+                    </a>
+    
+                    <div class="navbar-dropdown">
+    
+                        <a class="navbar-item" href="#">
+                            FAQ
+                        </a>
+    
+                        <a class="navbar-item" href="#">
+                            Новини
+                        </a>
+                        <a class="navbar-item" href="#">
+                            Про нас
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item">
+                            Ньюанси
+                        </a>
+                    </div>
+                </div>
+    
+                <a class="navbar-item" href="#">
+                    Продати книгу
+                </a>
+            </div>
+    
+            <div class="navbar-dropdown">
+    
+                    <a class="navbar-item" href="#}">
+                        Увійти
+                    </a>
+    
+    
+                        <a class="navbar-item" href="#">
+                            Профіль продавця
+                        </a>
+                    
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="#">
+                        Корзина
+                    </a>
+                    
+                        <a class="navbar-item" href="#">
+                            Особистий кабінет
+                        </a>
+    
+                        <a class="navbar-item" href="#">
+                            Адмін панель
+                        </a>
+        
+                    
+    
+                    <!-- Logout Link -->
+                    <a class="navbar-item" href="#">
+                        Вийти
+                    </a>
+    
+            </div>
+              
+        </div>
+    
+    </div>
+    
+    
+    </div>
+    </div>
+    </nav>
+    
+    {% block content %}
+    {% endblock content %}
+    
+    {% block footer %}
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <div class="columns">
+                <!-- Contact Information -->
+                <div class="column">
+                    <h2 class="title is-5">Звʼяжіться з нами</h2>
+                    <p>Signal: <span style="font-weight: bold;">@books</span></p>
+                    <p>Email: <span style="font-weight: bold;">books@mail.com</span></p>
+                </div>
+    
+                <!-- Hours of Operation -->
+                <div class="column">
+                    <h2 class="title is-5">Робочі часи</h2>
+                    <p>Понеділок - Пʼятниця: <span style="font-weight: bold;">10:00 - 20:00</span></p>
+                    <p>Субота: <span style="font-weight: bold;">12:00 - 17:00</span></p>
+                    <p>Неділя: <span style="font-weight: bold;">13:00 - 17:00</span></p>
+                </div>
+    
+                <!-- Quick Links -->
+                <div class="column">
+                    <h2 class="title is-5">Навігація</h2>
+                    <p>
+    
+                            <span><a href="№" style="text-decoration: none; color: inherit;">тут щось</a></span><br>
+    
+                        <span><a href="№" style="text-decoration: none; color: inherit;">FAQ</a></span>
+                    </p>
+                </div>
+            </div>
+    
+            <!-- Bottom Footer -->
+            <div class="columns" style="margin-top: 10px;">
+                <div class="column" style="font-size: 0.9rem; line-height: 1.4;">
+                    <p><strong>&copy; 2025 BookEveryWhere. All rights reserved.</strong></p>
+                    <p style="font-size: 0.8rem;">Develop & designed with ♥ by Kateryna Nalivayko</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock footer %}
+
+    
+</body>
+</html>
