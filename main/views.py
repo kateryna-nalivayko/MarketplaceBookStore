@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from main.models import AboutUs
+
 
 
 def index(request):
@@ -13,12 +15,13 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
-class AboutView(TemplateView):
-    template_name = 'main/about.html'
+def about(request):
+    about_us = AboutUs.objects.get(id=1)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Книги - про нас'
-        context['h1'] = 'Про нас'
-        context['body'] = 'Я - маркетплейс книжок. Я ще в розробцi.'
-        return context
+    context = {
+        'title': about_us.title,
+        'subtitle': about_us.subtitle,
+        'body': about_us.body
+    }
+
+    return render(request, 'main/about.html', context)

@@ -8,3 +8,17 @@ class GenreAdmin(admin.ModelAdmin):
     list_editable = ["position",]
     search_fields = ('name', 'slug')
     list_filter = ('parent',)
+
+
+@admin.register(Publisher)
+class PublisherAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ('title', 'published_year', 'language', 'price', 'quantity')
+    search_fields = ('title', 'authors__name', 'publisher__name')
+    list_filter = ('language', 'genre', 'publisher')
+    filter_horizontal = ('authors',)
+
