@@ -1,8 +1,14 @@
 from tabnanny import verbose
+from tkinter import CASCADE
 from django.db import models
-from tree_queries.models import TreeNode
 
-# Create your models here.
+from tree_queries.models import TreeNode
+from cities_light.models import Country, Region, City
+from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
+
+from books.choices import DeliverChoices
+
+
 
 
 class Genre(TreeNode):
@@ -22,6 +28,32 @@ class Genre(TreeNode):
     def __str__(self):
         return self.name
 
+class Author(models.Model):
+    name = models.CharField(max_length=150, unique=True, verbose_name='Автор')
+    age = models.CharField(max_length=300)
+
+    class Meta:
+        db_table = 'author'
+        verbose_name = 'Автор'
+        verbose_name_plural = 'Автори'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class Publisher(models.Model):
+    name = models.CharField(max_length=150, unique=True, db_default='Unknown Publisher', verbose_name='Видавець')
+
+    class Meta:
+        db_table = 'publisher'
+        verbose_name = 'Видавець'
+        verbose_name_plural = 'Видавці'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 
 class Book(models.Model):
     LANGUAGE_CHOICES = [
@@ -35,7 +67,6 @@ class Book(models.Model):
     slug = models.SlugField(
         max_length=200, unique=True, blank=True, null=True, verbose_name="URL"
     )
-    author = models.CharField(max_length=150, verbose_name="Автор")
     quantity = models.PositiveIntegerField(db_default=1, verbose_name="Quantity")
     published_year = models.PositiveBigIntegerField( verbose_name="Рік видання")
     language = models.CharField(
@@ -51,6 +82,8 @@ class Book(models.Model):
     updated_at = models.DateField(auto_now=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     genre = models.ForeignKey(Genre, verbose_name="Жанр", on_delete=models.CASCADE)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    authors = models.ManyToManyField(Author)
 
     class Meta:
         db_table = "book"
@@ -70,3 +103,50 @@ class BookImage(models.Model):
 
     class Meta:
         db_table = "book_images"
+
+class DEliveryOption(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.PROTECT, related_name='delivery_options')
+    delivery_option = models.CharField(max_length=20, choices=DeliverChoices, default=DeliverChoices.PICK_UP)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Країна')
+    region = ChainedForeignKey(
+        Region,
+        chained_field='country',
+        chained_model_field='country',
+        blank=True,
+        null=True,
+        verbose_name='Region (Single)',
+        related_name='deliveryoption_single'
+    )
+    city = ChainedForeignKey(
+        City,
+        chained_field='region',
+        chained_model_field='region',
+        blank=True,
+        null=True,
+        verbose_name='City (Single)',
+        related_name='deliveryoption_city'
+    )
+    region_multiple = ChainedManyToManyField(
+        Region,
+        chained_field='country',
+        chained_model_field='country',
+        blank=True,
+        verbose_name='Region (Multiple)',
+        related_name='deliveryoption_multiple'
+    )
+    city_multiple = ChainedManyToManyField(
+        City,
+        chained_field='region_multiple',
+        chained_model_field='region',
+        blank=True,
+        verbose_name='City (Multiple)',
+        related_name='deliveryoption_multiple_city'
+    )
+
+    class Meta:
+        db_table = 'delivery_option'
+        verbose_name = 'Варіант доставки'
+        verbose_name_plural = 'Варіанти доставки'
+    
+
+
