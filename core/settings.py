@@ -153,7 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CITITES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'EN', 'FR', 'DE']
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "maildev"
+EMAIL_HOST = "localhost"
 EMAIL_PORT = 1025
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = False
@@ -174,6 +174,8 @@ NEW_EMAIL_SENT_TEMPLATE  = 'email_templates/new_email_sent.html'
 REQUEST_NEW_EMAIL_TEMPLATE = 'email_templates/request_new_email_form.html'
 
 EXPIRE_AFTER = "1h"
+
+EMAIL_VERIFICATION_URL = 'http://localhost:8000/user/verify-email/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bulma"
 

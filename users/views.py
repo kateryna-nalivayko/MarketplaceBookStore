@@ -14,10 +14,10 @@ from verify_email.email_handler import ActivationMailManager
 
 def sign_in(request):
     if request.method == "POST":
-        form = CustomAuthenticationForm(request.POST)
+        form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
             username = request.POST["username"]
-            password = request.POST["userpassword"]
+            password = request.POST["password"]
             user = auth.authenticate(username=username, password=password)
 
             if user:
@@ -52,7 +52,7 @@ def customer_signup_view(request):
                     customer_group = Group.objects.get(name='Customer')
                     user.groups.add(customer_group)
                     user.save()
-                    user.refersh_from_db()
+                    user.refresh_from_db()
                     Customer.objects.get_or_create(user=user)
 
                     ActivationMailManager.send_verification_link(
@@ -62,7 +62,7 @@ def customer_signup_view(request):
                         request,
                         'Ваш аккаунт був успішно створенний. Будь-ласка, підтвердіть ваш email, щоб активувати його'
                     )
-                    return redirect('users:verification_pending')
+                    return redirect('user:verification_pending')
             except Exception as e:
                 if user and user.pk:
                     user.delete()
@@ -76,9 +76,16 @@ def customer_signup_view(request):
 
 def verification_pending(request):
     context = {
-        'title': 'Emali = процес верифікації. Успіх'
+        'title': 'Email - процес верифікації. Успіх'
     }
     return render(request, 'email_templates/email_verification_pending.html')
+
+
+def verification_pending(request):
+    context = {
+        'title': 'Emali = процес верифікації. Успіх'
+    }
+    return render(request, 'email_templates/email_verification_pending.html', context)
 
 
 @login_required
