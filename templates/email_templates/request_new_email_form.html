@@ -1,0 +1,33 @@
+{% extends "include/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="hero is-medium is-info">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Форма для повторного відправлення листа</h1>
+            <h2 class="subtitle">Будь ласка, введіть ваш email для того, щоб ми змогли відправити вам листа знову</h2>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="field mt-6">
+                        <div class="select2-container--below">
+                            {{ form.email|as_crispy_field }}
+
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-link is-fullwidth has-text-weight-bold">
+                                Відправити листа
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+        </div>
+    </div>
+</section>
+{% endblock content %}

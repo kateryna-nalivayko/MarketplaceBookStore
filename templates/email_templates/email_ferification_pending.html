@@ -1,0 +1,18 @@
+{% extends "include/base.html" %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="hero is-medium is-info">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">{{ title }}</h1>
+            <h2 class="subtitle">Дякуємо за реєстрацію! Ми відправили лист з підтвердженням на вказану вами адресу електронної пошти. Будь ласка, перевірте вашу пошту.</h2>
+            <p>Якщо ви не отримали листа, ви можете запросити нове посилання для підтвердження:</p>
+            <p><a href="{% url 'request-new-link-from-email' %}">Запросити новий лист з підтвердженням</a></p>
+            <p><strong>Примітка:</strong> Посилання дійсне тільки протягом обмеженого часу. (1 година)</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

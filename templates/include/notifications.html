@@ -1,0 +1,46 @@
+{% load static %}
+
+{% if form.non_field_errors %}
+<div class="container mt-4">
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <div class="notification is-danger is-light custom-shadow">
+                {{ form.non_field_errors }}
+                <button class="delete"></button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+  <div class="container mt-4">
+    <div class="columns is-centered">
+      <div class="column is-half">
+        {% if messages %}
+          {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div id="notification" class="notification is-success is-light is-fixed has-text-centered" role="alert">
+              {{ message }}
+              <button class="delete" onclick="this.parentElement.style.display='none';"></button>
+            </div>
+            {% elif message.tags == 'warning' %}
+            <div id="notification" class="notification is-warning is-light is-fixed has-text-centered" role="alert">
+              {{ message }}
+              <button class="delete" onclick="this.parentElement.style.display='none';"></button>
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <div id="jq-notification" class="notification is-success is-light is-fixed has-text-centered" style="display: none;" role="alert">
+            <button class="delete" onclick="this.parentElement.style.display='none';"></button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+
+  {% if form.open_time.errors %}
+    <p class="help is-danger">{{ form.open_time.errors }}</p>
+{% endif %}

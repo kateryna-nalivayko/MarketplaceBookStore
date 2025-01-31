@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from django.conf.global_settings import AUTH_USER_MODEL
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,13 +39,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
 
     'cities_light',
     'smart_selects',
+    'verify_email.apps.VerifyEmailConfig',
+    "crispy_forms",
+    "crispy_bulma",
 
     'main',
     'books',
+    'customer',
+    'store',
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,3 +151,30 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CITITES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'EN', 'FR', 'DE']
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "maildev"
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+
+DEFAULT_FROM_EMAIL = 'katenalivayko@knu.ua'
+
+LOGIN_URL = 'users:login' 
+
+VERIFY_EMAIL_REDIRECT = '/mailing/post-verification-success/'
+HTML_MESSAGE_TEMPLATE = "email_templates/verification_email.html" 
+
+VERIFICATION_SUCCESS_TEMPLATE = "email_templates/success.html"
+
+NEW_EMAIL_SENT_TEMPLATE  = 'email_templates/new_email_sent.html'
+
+REQUEST_NEW_EMAIL_TEMPLATE = 'email_templates/request_new_email_form.html'
+
+EXPIRE_AFTER = "1h"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bulma"
+
+CRISPY_TEMPLATE_PACK = "bulma"

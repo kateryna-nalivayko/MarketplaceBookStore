@@ -1,0 +1,14 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="hero is-medium is-danger">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Ваш email успішно підтверджено!</h1>
+            <h2 class="subtitle">Дякуємо за підтвердження вашого email.
+                Тепер ви можете <a href="{% url 'users:login' %}">увійти</a> у ваш акаунт.</h2>
+        </div>
+    </div>
+</section>
+{% endblock %}

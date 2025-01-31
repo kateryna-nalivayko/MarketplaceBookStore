@@ -1,0 +1,55 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-4-desktop is-6-tablet">
+                <div class="box">
+                    <p class="title is-4 has-text-centered">Авторизація</p>
+                    <form action="{% url 'user:login' %}" method="post">
+                        {% csrf_token %}
+                        
+                        <div class="field">
+                            <label class="label" for="id_username">Имʼя користувача</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" 
+                                value="{% if form.username.value %}{{ form.username.value }}{% endif %}" 
+                                placeholder="Напишіть імʼя користувача" id="username" name="username" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label" for="id_password">Пароль</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="password" 
+                                placeholder="Напишіть пароль" 
+                                id="id_password" 
+                                name="password" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-link is-fullwidth">Увійти</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="has-text-centered mt-3">
+                        <a href="#" class="has-text-grey">Забули пароль?</a> | 
+                        <a href="{% url 'user:customer_signup_view' %}" class="has-text-grey">Створити аккаунт покупця</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

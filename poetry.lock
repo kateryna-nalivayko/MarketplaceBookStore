@@ -16,6 +16,25 @@ files = [
 tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
+name = "crispy-bulma"
+version = "0.11.0"
+description = "Bulma template pack for django-crispy-forms"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "crispy-bulma-0.11.0.tar.gz", hash = "sha256:27eccd09a5a77754d64462f61ff585c00feb8c15f65d0d8f9676ab26f6bc3562"},
+    {file = "crispy_bulma-0.11.0-py3-none-any.whl", hash = "sha256:bc5406d64649a3da9c61d1aa969cb2c39bb3a1802ba8ee4bccebe94a84ca94e1"},
+]
+
+[package.dependencies]
+Django = ">=4.2"
+django-crispy-forms = ">=2.0"
+
+[package.extras]
+test = ["pytest", "pytest-django"]
+
+[[package]]
 name = "django"
 version = "5.1.5"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -71,6 +90,21 @@ pytz = "*"
 unidecode = ">=0.04.13"
 
 [[package]]
+name = "django-crispy-forms"
+version = "2.3"
+description = "Best way to have Django DRY forms"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "django_crispy_forms-2.3-py3-none-any.whl", hash = "sha256:efc4c31e5202bbec6af70d383a35e12fc80ea769d464fb0e7fe21768bb138a20"},
+    {file = "django_crispy_forms-2.3.tar.gz", hash = "sha256:2db17ae08527201be1273f0df789e5f92819e23dd28fec69cffba7f3762e1a38"},
+]
+
+[package.dependencies]
+django = ">=4.2"
+
+[[package]]
 name = "django-smart-selects"
 version = "1.7.2"
 description = "Django application to handle chained model fields."
@@ -99,6 +133,18 @@ files = [
 
 [package.extras]
 tests = ["coverage"]
+
+[[package]]
+name = "django-verify-email"
+version = "3.0.3"
+description = "A Django app for email verification."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "Django_Verify_Email-3.0.3-py3-none-any.whl", hash = "sha256:297af609c3cfbb8918cbe4f21c1a5b2a13da3a3847880bd9f399fbf9f6ebc4e3"},
+    {file = "django_verify_email-3.0.3.tar.gz", hash = "sha256:6627b9f6a5cbb7120e5556b00d05514119f7f848913167287e14688d7981401b"},
+]
 
 [[package]]
 name = "pillow"
@@ -316,4 +362,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "cec64eab060270997ef36a5822929857262282a3b3dadc5415b4be0eb5a4f7aa"
+content-hash = "a3da2b2e8d690f1f0f108b24a9edd92a8f75a19f46e5015c30c2ef88e8b7cd5e"

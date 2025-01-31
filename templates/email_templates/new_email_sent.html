@@ -1,0 +1,14 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="hero is-medium is-info">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Лист відправлено знову</h1>
+            <h2 class="subtitle">Перевірте свою поштову скриньку і перейдіть за посиланням, щоб активувати акаунт.
+                <a href="{% url 'users:login' %}" class="btn btn-primary">Повернутися на сторінку входу</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

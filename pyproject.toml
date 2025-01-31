@@ -13,7 +13,9 @@ dependencies = [
     "django-tree-queries (>=0.19.0,<0.20.0)",
     "pillow (>=11.1.0,<12.0.0)",
     "django-cities-light (>=3.10.1,<4.0.0)",
-    "django-smart-selects (>=1.7.2,<2.0.0)"
+    "django-smart-selects (>=1.7.2,<2.0.0)",
+    "django-verify-email (>=3.0.3,<4.0.0)",
+    "crispy-bulma (>=0.11.0,<0.12.0)"
 ]
 
 
