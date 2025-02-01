@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 
 from customer.models import Customer
 from users.forms import CustomAuthenticationForm, CustomerSignUpForm
@@ -22,13 +23,6 @@ def sign_in(request):
 
             if user:
                 auth.login(request, user)
-                messages.success(
-                    request, "f{username}, Ви успішно увійшли до вашого аккаунту"
-                )
-
-            redirect_page = request.POST.get("next", None)
-            if redirect_page and redirect_page != reverse("user:logout"):
-                return HttpResponseRedirect(request.POST.get("next"))
 
             return HttpResponseRedirect(reverse("main:index"))
     else:
@@ -58,10 +52,6 @@ def customer_signup_view(request):
                     ActivationMailManager.send_verification_link(
                         inactive_user=user, form=form, request=request
                     )
-                    messages.success(
-                        request,
-                        'Ваш аккаунт був успішно створенний. Будь-ласка, підтвердіть ваш email, щоб активувати його'
-                    )
                     return redirect('user:verification_pending')
             except Exception as e:
                 if user and user.pk:
@@ -76,13 +66,6 @@ def customer_signup_view(request):
 
 def verification_pending(request):
     context = {
-        'title': 'Email - процес верифікації. Успіх'
-    }
-    return render(request, 'email_templates/email_verification_pending.html')
-
-
-def verification_pending(request):
-    context = {
         'title': 'Emali = процес верифікації. Успіх'
     }
     return render(request, 'email_templates/email_verification_pending.html', context)
@@ -92,3 +75,22 @@ def verification_pending(request):
 def logout(request):
     auth.logout(request)
     return redirect(reverse('main:index'))
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            auth.update_session_auth_hash(request, form.user)
+            return redirect(reverse('main:index'))
+    else:
+        form = PasswordChangeForm(user=request.user)
+    
+    context = {
+        'title': 'Зміна паролю',
+        'form': form
+    }
+
+    return render(request, 'users/change_password.html', context)
