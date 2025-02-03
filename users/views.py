@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 
 from customer.models import Customer
-from users.forms import CustomAuthenticationForm, CustomerSignUpForm
+from store.models import Store
+from users.forms import CustomAuthenticationForm, CustomerSignUpForm, StoreSignUpForm
 
 from verify_email.email_handler import ActivationMailManager
 
@@ -94,3 +95,38 @@ def change_password(request):
     }
 
     return render(request, 'users/change_password.html', context)
+
+
+def store_signup_view(request):
+    if request.method == 'POST':
+        form = StoreSignUpForm(request.POST)
+            
+        if form.is_valid():
+            user = None
+            try:
+                with transaction.atomic():
+                    user = form.save(commit=False)
+                    user.is_active = False
+                    user.save()
+
+                    store_group = Group.objects.get(name='Store')
+                    user.groups.add(store_group)
+                    user.save()
+                    user.refresh_from_db()
+
+                    Store.objects.get_or_create(user=user)
+
+                    ActivationMailManager.send_verification_link(
+                        inactive_user=user, form=form, request=request
+                    )
+                    return redirect('user:verification_pending')
+            except Exception as e:
+                if user and user.pk:
+                    user.delete()
+        else:
+            print('Form errors', form.errors)
+    else:
+        form = CustomerSignUpForm()
+
+
+    return render(request, 'users/store_sign_up.html', {'form': form})
