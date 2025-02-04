@@ -109,7 +109,7 @@
                                 {% else %}
                     
                                     {% if user|is_in_group:"Store" %}
-                                        <a class="navbar-item" href="#}">
+                                        <a class="navbar-item" href="{% url "store:store_dash" %}">
                                             Профайл продавця
                                         </a>
                                         <a class="navbar-item" href="{% url "users:change_password" %}">

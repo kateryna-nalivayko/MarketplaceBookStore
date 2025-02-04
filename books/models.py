@@ -7,6 +7,7 @@ from cities_light.models import Country, Region, City
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
 from books.choices import DeliverChoices
+from store.models import Store
 
 
 
@@ -82,8 +83,9 @@ class Book(models.Model):
     updated_at = models.DateField(auto_now=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     genre = models.ForeignKey(Genre, verbose_name="Жанр", on_delete=models.CASCADE)
-    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, null=True, blank=True)
     authors = models.ManyToManyField(Author)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         db_table = "book"

@@ -1,0 +1,38 @@
+{% extends "include/store-dash.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2 class="title is-4">Форма для додавання книжок</h2>
+
+<div class="container">
+    <form action="{% url "store:add_books" %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="column is-12">
+
+            <article class="box">
+                <p class="is-size-6 hast_text-centerd">Опис книги</p>
+                <fieldset>
+                    {{ book_form|crispy }}
+                </fieldset>
+            </article>
+
+            <article class="box">
+                <p class="is-size-6 hast_text-centerd">Опис книги</p>
+                <fieldset>
+                    {{ image_formset.management_form }}
+                    {% for form in image_formset %}
+                    {{ form|crispy }}
+                    {% endfor %}
+                </fieldset>
+            </article>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-link is-fullwidth">Додати книгу</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock content %}
