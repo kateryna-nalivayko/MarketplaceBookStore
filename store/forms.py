@@ -1,10 +1,13 @@
 
-from django.forms import ImageField, ModelForm, inlineformset_factory
+from django.forms import BaseInlineFormSet, ImageField, ModelChoiceField, ModelForm, ModelMultipleChoiceField, forms, inlineformset_factory
 
-from books.models import Book, BookImage
+from books.choices import DeliverChoices
+from books.models import Author, Book, BookImage, DEliveryOption, Publisher
 
 
 class AddBookForm(ModelForm):
+    authors = ModelMultipleChoiceField(queryset=Author.objects.all(), required=True)
+    publisher = ModelChoiceField(queryset=Publisher.objects.all(), required=True)
     class Meta:
         model = Book
         fields = (
@@ -12,7 +15,9 @@ class AddBookForm(ModelForm):
             'quantity', 'description',
             'number_of_pages', 'published_year',
             'language',
-            'price'
+            'price',
+            'authors',
+            'publisher'
         )
 
 
@@ -29,4 +34,27 @@ BookImageFormSet = inlineformset_factory(
     form=BookImageForm,
     extra=3,
     can_delete=True,
+)
+
+class DeliveryOptionMultiForm(ModelForm):
+    class Meta:
+        model = DEliveryOption
+        fields = ['delivery_option', 'country', 'region_multiple',
+                  'city_multiple']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['delivery_option'].initial = DeliverChoices.DELIVER
+
+
+class BaseDeliveryOptionMultiFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+DeliveryOptionMultiFormSet = inlineformset_factory(
+    Book,
+    DEliveryOption,
+    form=DeliveryOptionMultiForm,
+    extra=1,
+    can_delete=True
 )

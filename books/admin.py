@@ -15,6 +15,13 @@ class PublisherAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'age')
+    search_fields = ('name',)
+    list_filter = ('name',)
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'published_year', 'language', 'price', 'quantity')

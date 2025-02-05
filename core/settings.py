@@ -150,7 +150,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CITITES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'EN', 'FR', 'DE']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['UA', 'EN', 'FR', 'DE']
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "localhost"
@@ -180,3 +180,5 @@ EMAIL_VERIFICATION_URL = 'http://localhost:8000/user/verify-email/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bulma"
 
 CRISPY_TEMPLATE_PACK = "bulma"
+
+USE_DJANGO_JQUERY = True

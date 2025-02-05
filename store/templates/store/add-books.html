@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<article class="box">
 <h2 class="title is-4">Форма для додавання книжок</h2>
 
 <div class="container">
@@ -26,7 +27,38 @@
                     {% endfor %}
                 </fieldset>
             </article>
-            <div class="field">
+
+            <article class="box">
+                <p class="is-size-6 has-text-centered">Опції доставки</p>
+                <fieldset>
+                  {{ delivery_multi_formset.management_form }}  
+                  {% for form in delivery_multi_formset %}
+                    <div class="field">
+                      <label for="{{ form.delivery_option.id_for_label }}"></label>
+                      {{ form.delivery_option|as_crispy_field }}
+                    </div>
+              
+                    <div class="field">
+                      <label for="{{ form.country.id_for_label }}"></label>
+                      {{ form.country|as_crispy_field }} 
+                    </div>
+              
+                    <div class="field">
+                      <label for="{{ form.region.id_for_label }}"></label>
+                      {{ form.region_multiple|as_crispy_field }}
+                  </div>
+              
+                    <div class="field">
+                      <label for="{{ form.city.id_for_label }}"></label>
+                      {{ form.city_multiple|as_crispy_field }}  
+                    </div>
+                  {% endfor %}
+                </fieldset>
+              </article>
+              </div>
+
+
+            <div class="button is-centered">
                 <div class="control">
                     <button type="submit" class="button is-link is-fullwidth">Додати книгу</button>
                 </div>
@@ -35,4 +67,9 @@
         </div>
     </form>
 </div>
+</article>
+
+{{ book_form.media }}
+{{ delivery_multi_formset.media }}
+{{ image_formst.media }}
 {% endblock content %}
