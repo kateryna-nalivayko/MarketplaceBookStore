@@ -15,7 +15,9 @@ dependencies = [
     "django-cities-light (>=3.10.1,<4.0.0)",
     "django-smart-selects (>=1.7.2,<2.0.0)",
     "django-verify-email (>=3.0.3,<4.0.0)",
-    "crispy-bulma (>=0.11.0,<0.12.0)"
+    "crispy-bulma (>=0.11.0,<0.12.0)",
+    "django-model-utils (>=5.0.0,<6.0.0)",
+    "pandas (>=2.2.3,<3.0.0)"
 ]
 
 

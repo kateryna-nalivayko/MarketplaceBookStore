@@ -1,8 +1,10 @@
 
-from django.forms import BaseInlineFormSet, ImageField, ModelChoiceField, ModelForm, ModelMultipleChoiceField, forms, inlineformset_factory
+from fileinput import FileInput
+from django.forms import BaseInlineFormSet, CharField, FileField, ImageField, ModelChoiceField, ModelForm, ModelMultipleChoiceField, Textarea, ValidationError, forms, inlineformset_factory
 
 from books.choices import DeliverChoices
 from books.models import Author, Book, BookImage, DEliveryOption, Publisher
+from store.models import Store
 
 
 class AddBookForm(ModelForm):
@@ -58,3 +60,22 @@ DeliveryOptionMultiFormSet = inlineformset_factory(
     extra=1,
     can_delete=True
 )
+
+
+class ChangeStoreForm(ModelForm):
+    class Meta:
+        model = Store
+        fields = ('name', 'description', 'image')
+
+        name = CharField(label='Назва магазину', required=True)
+        description = CharField(label="Опис магазинн", widget=Textarea, required=True)
+        image = ImageField(label='Додайте вашого аватара')
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if Store.objects.filter(name=name).exclude(pk=self.instance.pk).exists():
+            raise ValidationError("Магазин з такою назвою вже є")
+        return name
+
+class CSVUploadForm(forms.Form):
+    csv_file = FileField(label="Upload CSV File")

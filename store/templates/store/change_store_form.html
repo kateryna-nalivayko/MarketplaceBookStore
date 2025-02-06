@@ -1,0 +1,39 @@
+{% extends "include/store-dash.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="box">
+        <p class="has-text-centered is-size-4 mt-4 mb-4">Форма для внесення змін, щодо інформації магазину</p>
+        
+        <form action="{% url "store:change_store" %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {{ form|crispy }}
+
+
+            <button type="submit" class="button is-primary">Зберегти зміни</button>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Get all "file-input" elements
+        const fileInputs = Array.prototype.slice.call(document.querySelectorAll('.file-input'), 0);
+      
+        // Add a onchange event on each of them
+        fileInputs.forEach(el => {
+          el.addEventListener('change', () => {
+            // Get the target from the "data-target" attribute
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+            // Update the filename
+            $target.textContent = el.value;
+          });
+        });
+      });
+</script>
+{% endblock content %}

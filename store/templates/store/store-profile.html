@@ -9,7 +9,7 @@
                 <div class="column is-one-third">
                     <figure class="image is-128x128">
                         {% if store.image %}
-                        <img src="{{ sotre.image.url }}" alt="Store Loga">
+                        <img src="{{ store.image.url }}" alt="Store Loga">
                         {% else %}
                         <img src="https://bulma.io/assets/images/placeholders/128x128.png" />
                         {% endif %}
@@ -22,7 +22,7 @@
             </div>
 
             <div class="buttons">
-                <a class="button is-link" href="#">Налаштувати інфомацію магазину</a>
+                <a class="button is-link" href="{% url "store:change_store" %}">Налаштувати інфомацію магазину</a>
             </div>
 
         </div>

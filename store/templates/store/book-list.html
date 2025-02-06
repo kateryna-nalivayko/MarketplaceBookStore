@@ -1,0 +1,113 @@
+{% extends "include/store-dash.html" %}
+{% load static %}
+
+{% block content %}
+<div class="header">
+    <h1 class="title is-3">Список книг - {{ status_type|title }}</h1>
+</div>
+
+<div class="box">
+    <h2 class="title is-4">Таблиця книг ({{ status_type|title }})</h2>
+
+    <!-- Product Status Tabs -->
+    <div class="tabs is-boxed">
+        <ul>
+            <li><a href="{% url 'store:active_books' %}">Активні книги</a></li>
+            <li><a href="{% url 'store:pending_books' %}">В процесі</a></li>
+            <li><a href="{% url 'store:inactive_books' %}">Не активні</a></li>
+            <li><a href="{% url 'store:rejected_books' %}">Відхилені</a></li>
+
+            <div class="has-text-right">
+                <a href="{% url 'store:export_books' %}" class="button is-primary">Export CSV</a>
+            </div>
+        </ul>
+    </div>
+
+
+    <div class="container">
+        <form method="POST" action="{% if status_type == 'active' %}{% url 'store:deactivate_books' %}{% elif status_type == 'inactive' %}{% url 'store:activate_books' %}{% endif %}">            
+            {% csrf_token %}
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>Назва</th>
+                        <th>Опис</th>
+                        <th>Ціна</th>
+                        <th>Кількість</th>
+                        <th>Жанр</th>
+                        <th>Доставка</th>
+                        <th>Країна</th>
+                        <th>Місто</th>
+                        <th>Дія</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <td><input type="checkbox" name="book_ids" value="{{ book.id }}"></td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.description|truncatechars:50 }}</td>
+                            <td>{{ book.price }}</td>
+                            <td>{{ book.quantity }}</td>
+                            <td>{{ book.genre.name }}</td>
+                            <td>
+                                {% for delivery in book.delivery_options.all %}
+                                    {{ delivery.delivery_option }}<br>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for delivery in book.delivery_options.all %}
+                                    {{ delivery.country.name }}<br>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for delivery in book.delivery_options.all %}
+                                    {% if delivery.city %}
+                                        {{ delivery.city.name }}
+                                    {% elif delivery.city_multiple.exists %}
+                                        <ul>
+                                            {% for city in delivery.city_multiple.all %}
+                                                <li>{{ city.name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        No city specified
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a class="button is-small is-info" href="#">Змінити</a>
+                                <form action="#" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button class="button is-small is-danger" type="submit" onclick="return confirm('Are you sure?');">Видалити</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="10">No books available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Button based on status_type -->
+            {% if status_type == 'active' %}
+                <button type="submit" class="button is-warning">Deactivate Selected Books</button>
+            {% elif status_type == 'inactive' %}
+                <button type="submit" class="button is-success">Activate Selected Books</button>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('select-all').addEventListener('click', function() {
+        let checkboxes = document.querySelectorAll('input[name="book_ids"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+{% endblock %}

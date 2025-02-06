@@ -1,13 +1,16 @@
-from tabnanny import verbose
 from tkinter import CASCADE
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from tree_queries.models import TreeNode
 from cities_light.models import Country, Region, City
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
-from books.choices import DeliverChoices
+from books.choices import BookStatusChoices, DeliverChoices
 from store.models import Store
+
+from model_utils.fields import StatusField, MonitorField
+from model_utils import Choices
 
 
 
@@ -57,6 +60,13 @@ class Publisher(models.Model):
 
 
 class Book(models.Model):
+    STATUS = Choices(
+        ('draft', 'Draft'),
+        ('pending', 'Pending Confirmation'),
+        ('active', 'Active'),
+        ('unactive', 'Inactive'),
+        ('rejected', 'Rejected')
+    )
     LANGUAGE_CHOICES = [
         ("EN", "English"),
         ("UK", "Ukrainian"),
@@ -86,6 +96,7 @@ class Book(models.Model):
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, null=True, blank=True)
     authors = models.ManyToManyField(Author)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, blank=True, null=True)
+    status = StatusField(choices_name='STATUS', default='pendint')
 
     class Meta:
         db_table = "book"
