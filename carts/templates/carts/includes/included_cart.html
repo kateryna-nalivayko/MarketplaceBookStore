@@ -1,0 +1,74 @@
+{% load static %}
+{% load carts_tags %}
+
+{% user_carts request as carts %}
+
+  {% for cart in carts %}
+  <div class="box">
+  <p>{{ cart.product.title }}</p>
+  </div>
+  <div class="box">
+    <div class="columns is-vcentered">
+      <!-- Контейнер для кнопок и поля количества -->
+      <div class="column is-narrow">
+         <div class="field has-addons">
+          <p class="control">
+            <button type="button" class="button is-dark is-small decrement"
+              data-cart-id="{{ cart.id }}" 
+              data-cart-change-url="{% url "cart:cart_change" %}">
+              {% csrf_token %}-
+            </button>
+          </p>
+          <p class="control">
+            <input type="text" class="input form-control is-small has-text-centered" value="{{ cart.quantity }}" readonly>
+          </p>
+          <p class="control">
+            <button type="button" class="button is-dark is-small increment"
+              data-cart-id="{{ cart.id }}" 
+              data-cart-change-url="{% url "cart:cart_change" %}">
+              {% csrf_token %}+
+            </button>
+          </p>
+        </div>
+      </div> 
+      <div class="column">
+        <p>x {{ cart.product.price }} =</p>
+      </div>
+      <div class="column">
+        <strong>{{ cart.products_price }}</strong>
+      </div>
+      <div class="column is-narrow">
+        <a href="{% url 'cart:cart_remove' %}" class="button is-danger is-small remove-from-cart" data-cart-id="{{ cart.id }}">
+          {% csrf_token %}
+          <span class="icon">
+            <i class="fa-solid fa-trash"></i>
+          </span>
+        </a>
+      </div>
+    </div> <!-- Closing .columns -->
+  </div> <!-- Closing .box for cart items -->
+  {% endfor %}
+
+  <!-- Box for total price and quantity -->
+  <div class="box">
+    <div class="columns is-vcentered">
+      <div class="column is-half">
+        <p class="subtitle">Всього <strong>{{ carts.total_quantity }}</strong> книг на суму</p>
+      </div>
+      <div class="column is-half has-text-right">
+        <h4 class="title is-4"><strong>{{ carts.total_price }}</strong></h4>
+      </div>
+    </div> <!-- Closing .columns for total -->
+  </div> <!-- Closing .box for total -->
+  {% if carts and not order %}
+  <!-- Footer should be inside .modal-card-foot -->
+  <footer class="modal-card-foot">
+      <div class="level-item has-text-centered">
+          <a href="#" class="button is-primary">Оформити замовлення</a>
+      </div>
+  </footer>         
+  {% endif %}
+
+
+
+  

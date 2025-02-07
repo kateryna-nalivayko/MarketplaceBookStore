@@ -22,12 +22,13 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls', namespace='main')),
-    path('catalog/',include('books.urls', namespace='books')),
+    path('catalog/',include('books.urls', namespace='catalog')),
     path('chaining/', include('smart_selects.urls')),
     path('user/', include('users.urls', namespace='user')),
     path('customer/', include('customer.urls', namespace='customer')),
     path('store/', include('store.urls', namespace='store')),
     path('verification/', include('verify_email.urls')),
+    path('cart/', include('carts.urls', namespace='cart')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

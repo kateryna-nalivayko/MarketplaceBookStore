@@ -107,6 +107,9 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    def display_id(self):
+        return f"{self.id:05}"
+
 
 class BookImage(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="images")

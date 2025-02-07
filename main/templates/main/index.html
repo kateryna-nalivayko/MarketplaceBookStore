@@ -22,7 +22,7 @@
                  {% if category_context.parent_category %}
                 <div class="column is-one-third">
                     <div class="box has-text-centered">
-                        <a href="#}">
+                        <a href="{% url "catalog:index" category_context.parent_category.slug %}">
                             <h2 class="subtitle">{{ category_context.parent_category.name }}</h2>
                         </a>
                     </div>
@@ -31,7 +31,7 @@
                 {% for category in category_context.immediate_children %}
                  <div class="column is-one-third">
                     <div class="box has-text-centered">
-                        <a href="#">
+                        <a href="{% url "catalog:index" category.slug %}">
                             <h2 class="subtitle">{{ category.name }}</h2>
                         </a>
                     </div>

@@ -1,0 +1,332 @@
+{% extends "include/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block modal_cart %}
+{% include "include/cart_button.html" %}
+{% endblock modal_cart %}
+
+<style>
+    .no-link-color a {
+        color: inherit;
+        text-decoration: none;
+    }
+</style>
+
+{% block content %}
+<section>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="columns mt-4 mb-0">
+            <div class="column">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a class="no-link-color" href="{% url 'main:index' %}">Головна</a></li>
+                        {% for category in breadcrumb_categories %}
+                            <li><a href="{% url 'catalog:index' category.slug %}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Назва батьківської категорії -->
+         {% if parent_category %}
+         <div class="columns">
+             <div class="column">
+                 <p class="mt-0"><strong>{{ parent_category.name }}</strong></p>
+             </div>
+         </div>         
+         {% endif %}
+
+        <!-- Вивід їх дітей -->
+        <div class="columns is-multiline">
+            {% for category in immediate_children %}
+            <div class="column is-one-third">
+                <div class="box has-text-centered">
+                    <a href="{% url "catalog:index" category.slug %}">
+                        <h2 class="subtitle">{{ category.name }}</h2>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!--  -->
+        <div class="columns">
+            <!-- Боковая панель з категоріями та чекбоксами -->
+            <div class="column is-3">
+                <div class="box">
+                    <aside class="menu">
+                        <p class="menu-label">Група книг</p>
+                        <ul class="menu-list">
+                            {% for category in immediate_children %}
+                                <li>
+                                    <a href="{% url 'catalog:index' category.slug %}"
+                                       class="{% if parent_category and parent_category.slug == category.slug %}is-active{% endif %}">
+                                        {{ category.name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+
+                <div class="box mb-3">
+                    <aside class="menu">
+                        <p class="menu-label">Фільтр доставки</p>
+    
+                        <form method="get">
+                            {% csrf_token %}
+                            {{ form.media.js }}
+                            <!-- Delivery Option Select -->
+                            <div class="field">
+                                <label class="label"></label>
+                                <div class="control">
+                                    {{ form.delivery_option|as_crispy_field }}
+                                </div>
+                            </div>
+    
+                            <!-- Country Select -->
+                            <div class="field">
+                                <label class="label"></label>
+                                <div class="control">
+                                    {{ form.country|as_crispy_field }}
+                                </div>
+                            </div>
+    
+                            <!-- Region Select -->
+                            <div class="field">
+                                <label class="label"></label>
+                                <div class="control">
+                                    {{ form.region|as_crispy_field }}
+                                </div>
+                            </div>
+    
+                            <!-- City Select -->
+                            <div class="field">
+                                <label class="label"></label>
+                                <div class="control">
+                                    {{ form.city|as_crispy_field }}
+                                </div>
+                            </div>
+    
+                            <button type="submit" class="button is-primary mt-4">Пошук</button>
+                        </form>
+                    </aside>
+                </div>
+
+                <div class="box">
+                    <aside class="menu">
+                        <p class="menu-label">Видавництво</p>
+                        <ul class="menu-list">
+                            <li class="mt-1">
+                                <label class="checkbox">
+                                    <input type="checkbox" />
+                                    США
+                                </label>
+                            </li>
+                            <li class="mt-1">
+                                <label class="checkbox">
+                                    <input type="checkbox" />
+                                    Україна
+                                </label>
+                            </li>
+                            <li class="mt-1">
+                                <label class="checkbox">
+                                    <input type="checkbox" />
+                                    Германія
+                                </label>
+                            </li>
+                            <li class="mt-1">
+                                <label class="checkbox">
+                                    <input type="checkbox" />
+                                    Польша
+                                </label>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+
+                <div class="box">
+                    <aside class="menu">
+                        <p class="menu-label">Доставка</p>
+                        <ul class="menu-list">
+                            <li class="mt-1">
+                                <label class="radio">
+                                    <input type="radio" name="delivery" value="readytopickup" />
+                                    Готов до видачі
+                                </label>
+                            </li>
+                            <li class="mt-1">
+                                <label class="radio">
+                                    <input type="radio" name="delivery" value="needtime" />
+                                    Потрібен час
+                                </label>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+
+
+
+
+            </div>
+
+            <!-- Основний контент -->
+            <div class="column is-9 mb-5">
+                <!-- Кнопки фільтру й дропдауну -->
+                <div class="is-flex is-justify-content-space-between is-align-items-center mb-1">
+                    <div>
+                        <a href="#" class="button is-white is-small is-link is-outlined">
+                            Топ продаж
+                        </a>
+                        <a href="{% url 'catalog:index' slug_url %}?order_by=id" class="button is-white is-small is-primary is-outlined">
+                            Новинки
+                        </a>
+                        <a href="#" class="button is-white is-small is-info is-outlined">
+                            Популярні книги
+                        </a>
+                    </div>
+
+                    <!-- Dropdown меню -->
+                    
+                        <div class="dropdown is-right">
+                            <div class="dropdown-trigger">
+                                <!-- Встановлюємо type="button" щоб завчасно не відправляти форму -->
+                                <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                                    <span>Фільтр</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                                <div class="dropdown-content">
+                                    <a href="{% url 'catalog:index' slug_url %}?order_by=id" class="dropdown-item">За замовченням</a>
+                                    <a href="{% url 'catalog:index' slug_url %}?order_by=-price" class="dropdown-item">Від дорогих к дешевим</a>
+                                    <a href="{% url 'catalog:index' slug_url %}?order_by=price" class="dropdown-item">Від дешевих к дорогим</a>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="filter" id="filterValue">
+                
+                </div>
+
+                <!-- Карти книг -->
+                <div class="columns is-multiline">
+                    {% for product in goods %}
+                    <div class="column is-one-third">
+                        <div class="card mt-3">
+                            {% if product.images.first %}
+                            <img id="cardfoto" src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+                        {% else %}
+                            <img src="{% static 'deps/images/books/Not found image.png' %}" alt="Image not available">
+                        {% endif %}
+                    </figure>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-7 no-link-color" class="no-link-color">
+                                            <a href="{% url "catalog:book" product.slug %}">{{ product.title }}</p></a>
+                                    </div>
+                                </div>
+
+                                <div class="content">
+                                    <p class="is-size-7">{{ product.description | truncatechars:100 }}</p> 
+                                    <p class="is-size-7 has-text-grey has-text-right">id: {{ product.display_id}}</p>
+
+                                    <div class="columns is-mobile is-vcentered">
+                                        <div class="column">
+                                            <p><strong>{{ product.price }}</strong> грн</p>
+                                        </div>
+
+                                        <div class="column is-narrow">
+                                            <a href="{% url 'cart:cart_add' %}" class="button is-primary add-to-cart"
+                                            data-product-id="{{ product.id }}">{% csrf_token %}В корзину</a>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+
+
+                    <div class="container mb-3 mt-3">
+                        <nav class="pagination is-centered mt-6 mb-6" role="navigation" aria-label="pagination">
+                            <a href="{% if goods.has_previous %}
+                                        {% querystring page=goods.previous_page_number %}
+                                    {% else %}
+                                        #
+                                    {% endif %}"
+                               class="pagination-previous{% if not goods.has_previous %} is-disabled{% endif %}">
+                              Попередник
+                            </a>
+                          
+                            <a href="{% if goods.has_next %}
+                                        {% querystring page=goods.next_page_number %}
+                                    {% else %}
+                                        #
+                                    {% endif %}"
+                               class="pagination-next{% if not goods.has_next %} is-disabled{% endif %}">
+                              Наступна
+                            </a>
+                          
+                            <ul class="pagination-list">
+                                {% for page in goods.paginator.page_range %}
+                                  {% if page >= goods.number|add:-2 and page <= goods.number|add:2 %}
+                                    {% if page == goods.number %}
+                                      <li>
+                                        <a href="#" class="pagination-link is-current" aria-label="Page {{ page }}" aria-current="page">{{ page }}</a>
+                                      </li>
+                                    {% else %}
+                                      <li>
+                                        <a href="{% querystring page=page %}" class="pagination-link" aria-label="Goto page {{ page }}">{{ page }}</a>
+                                      </li>
+                                    {% endif %}
+                                  {% endif %}
+                                {% endfor %}
+                              </ul>
+                          </nav>
+                      </div>
+                   
+
+        </div>
+        </div>
+
+</section>
+
+ <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+
+            const trigger = dropdown.querySelector('.dropdown-trigger');
+
+
+            trigger.addEventListener('click', function (event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('is-active');
+            });
+        });
+
+
+        document.addEventListener('click', function (event) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('is-active');
+            });
+        });
+    });
+</script>
+{% endblock content %}
+
+
+
+

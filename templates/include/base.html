@@ -147,12 +147,13 @@
                             </div>
     
     </div>
-    
+{% block modal_cart %}{% endblock modal_cart %}
     
     </div>
     </div>
     </nav>
-    
+
+    {% include "include/notifications.html" %}
     {% block content %}
     {% endblock content %}
     

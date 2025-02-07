@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 
+from carts.models import Cart
 from customer.models import Customer
 from store.models import Store
 from users.forms import CustomAuthenticationForm, CustomerSignUpForm, StoreSignUpForm
@@ -22,10 +23,20 @@ def sign_in(request):
             password = request.POST["password"]
             user = auth.authenticate(username=username, password=password)
 
+            session_key = request.session.session_key
+
             if user:
                 auth.login(request, user)
+                messages.success(request, f"{username}, Вы увійшли в аккаунт")
+                
+                if session_key:
+                    Cart.objects.filter(session_key=session_key).update(user=user)
 
-            return HttpResponseRedirect(reverse("main:index"))
+                redirect_page = request.POST.get('next', None)
+                if redirect_page and redirect_page != reverse('user:logout'):
+                    return HttpResponseRedirect(request.POST.get('next'))
+                
+                return HttpResponseRedirect(reverse('main:index'))
     else:
         form = CustomAuthenticationForm()
 

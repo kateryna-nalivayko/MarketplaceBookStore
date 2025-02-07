@@ -1,0 +1,220 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block modal_cart %}
+{% include "include/cart_button.html" %}
+{% endblock modal_cart %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="columns mt-4 mb-0">
+            <div class="column">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="{% url 'main:index' %}">Головна</a></li>
+    
+                        <!-- Loop through breadcrumb categories to build the trail -->
+                        {% for category in breadcrumb_categories %}
+                            <li><a href="{% url 'catalog:index' category.slug %}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Product Name -->
+        <div class="columns mt-4">
+            <div class="column">
+                <p class="mt-4"><strong>{{ book.title }}</strong></p>
+            </div>
+        </div>
+
+
+
+        <!-- Product Info and Carousel -->
+        <div class="columns">
+            <div class="column is-half">
+                <div class="carousel-container">
+                    <!-- Carousel Image Wrapper -->
+                    <figure class="image is-3by2">
+                        <img id="carousel-image" 
+                             src="{{ book.images.first.image.url }}" 
+                             data-images='[
+                               {% for image in book.images.all %}
+                                 "{{ image.image.url }}"{% if not forloop.last %},{% endif %}
+                               {% endfor %}
+                             ]' 
+                             alt="Product Image">
+                    </figure>
+                    <!-- Carousel Controls -->
+                    <div class="carousel-controls is-flex is-justify-content-space-between mt-2">
+                        <button class="button is-small is-primary" id="prev-button">Previous</button>
+                        <button class="button is-small is-primary" id="next-button">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-half">
+                <!-- Add to Cart Button -->
+                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                    <a href="{% url 'cart:cart_add' %}" class="button is-primary add-to-cart" data-product-id="{{ product.id }}">
+                        {% csrf_token %}Додати у кошик
+                    </a>
+                </div>
+
+                <hr class="divider">
+
+                <!-- Product Price -->
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>Ціна:</strong></h3>
+                    <p class="mt-3">{{ book.price }}</p>
+                </div>
+
+                
+                <hr class="divider">
+                
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>Кількість:</strong></h3>
+                    <p class="mt-3">{{ book.quantity }}</p>
+                </div>
+
+                <hr class="divider">
+
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>Видавництво:</strong></h3>
+                    <p class="mt-3">{{ book.publisher.name }}</p>
+                </div>
+
+                <hr class="divider">
+
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>Автор(и):</strong></h3>
+                    <p class="mt-3">
+                        {% for author in book.authors.all %}
+                            {{ author.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+
+                <hr class="divider">
+
+
+                {% if delivery_options %}
+                {% for option in delivery_options %}
+                    <div class="is-flex is-justify-content-space-between">
+                        <h3 class="mt-3"><strong>Країна:</strong></h3>
+                        <p class="mt-3">{{ option.country.name }}</p>
+                    </div>
+
+                    <hr class="divider">
+            
+                    <div class="is-flex is-justify-content-space-between">
+                        <h3 class="mt-3"><strong>Тип доставки:</strong></h3>
+                        <p class="mt-3">{{ option.delivery_option }}</p>
+                    </div>
+                    <hr class="divider">
+            
+                    {% if option.region_multiple.all %}
+                        <div class="is-flex is-justify-content-space-between">
+                            <h3 class="mt-3"><strong>Доступні області(регіони):</strong></h3>
+                            <p class="mt-3">
+                                {% for region in option.region_multiple.all %}
+                                    {{ region.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <hr class="divider">
+                    {% endif %}
+            
+                    {% if option.city_multiple.all %}
+                        <div class="is-flex is-justify-content-space-between">
+                            <h3 class="mt-3"><strong>Наявні міста:</strong></h3>
+                            <p class="mt-3">
+                                {% for city in option.city_multiple.all %}
+                                    {{ city.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <hr class="divider">
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>No delivery options available for this product.</strong></h3>
+                </div>
+            {% endif %}
+
+                <!-- Seller Info -->
+                <hr class="divider">
+                <div class="is-flex is-justify-content-space-between">
+                    <h3 class="mt-3"><strong>Продавець:</strong></h3>
+                    {% if book.store.name %}
+                    <a href="#">
+                        <p class="mt-3">{{ book.store.name }}</p>
+                    </a>
+                    {% else %}
+                    <p>Імʼя магазину ще не задано</p>
+             
+                    {% endif %}
+                </div>
+
+                <hr class="divider">
+
+                <!-- Product Description -->
+                <h3 class="mt-3"><strong>Опис:</strong></h3>
+                <p class="mt-3">{{ book.description }}</p>
+                <hr class="divider">
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Modal Window for Enlarged Images -->
+<div id="image-modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <figure class="image is-4by3">
+            <img id="modal-image" src="" alt="Збільшити зобрження">
+        </figure>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<!-- JavaScript for Carousel -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch the image URLs from the data-images attribute
+        const images = JSON.parse(document.getElementById('carousel-image').getAttribute('data-images'));
+        
+        let currentIndex = 0;
+
+        const carouselImage = document.getElementById('carousel-image');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+
+        // Update the carousel image
+        function updateImage(index) {
+            carouselImage.src = images[index];
+        }
+
+        // Set the initial image after page load
+        updateImage(currentIndex);
+
+        // Go to the previous image
+        prevButton.addEventListener('click', function() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateImage(currentIndex);
+        });
+
+        // Go to the next image
+        nextButton.addEventListener('click', function() {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateImage(currentIndex);
+        });
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% load static %}
+{% load carts_tags %}
+
+{% user_carts request as carts %}
+
+<button class="js-modal-trigger" id="modalButton">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span id="goods-in-cart-count">{{ carts.total_quantity }}</span>                
+</button>
+
+
+
+ <!-- Разметка модального окна корзины -->
+<div class="modal" id="exampleModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-centered">
+                <strong>Корзина</strong>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+
+        <!-- Added .modal-card-body for content -->
+        <section class="modal-card-body">
+            <div class="container" id="cart-items-container">
+                {% if carts.total_quantity > 0 %}
+                    {% include "carts/includes/included_cart.html" %}
+                {% else %}
+                    <div class="notification is-warning has-text-centered">
+                        Ваша корзина порожня.
+                    </div>
+                {% endif %}
+            </div>
+            </section>
+
+</div>
+</div>
