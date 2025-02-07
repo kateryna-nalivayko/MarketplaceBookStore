@@ -64,7 +64,7 @@
   <!-- Footer should be inside .modal-card-foot -->
   <footer class="modal-card-foot">
       <div class="level-item has-text-centered">
-          <a href="#" class="button is-primary">Оформити замовлення</a>
+          <a href="{% url "orders:create_order" %}" class="button is-primary">Оформити замовлення</a>
       </div>
   </footer>         
   {% endif %}

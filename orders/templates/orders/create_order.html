@@ -1,0 +1,126 @@
+{% extends "include/base.html" %}
+{% load static %}
+{% load carts_tags %}
+
+{% block content %}
+<div class="container mt-3 mb-3">
+    <div class="columns">
+        <div class="column">
+            <p class="is-size-4 has-text-centered">Обрані книги</p>
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column">
+            {% user_carts request as carts %}
+            {% include "carts/includes/included_cart.html" %}
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column">
+            <p class="is-size-4 has-text-centered">Деталі замовлення</p>
+        </div>
+    </div>
+
+    <form class="box" action="{% url "orders:create_order" %}" method="post" id="create_order_form">
+        {% csrf_token %}
+        <div class="columns">
+            <div class="column is-half">
+                <div class="field">
+                    <label class="label" for="id_first_name">Імʼя*:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="id_first_name" name="first_name" value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}" required>
+                    </div>
+                    {% if form.first_name.errors %}
+                        <p class="help is-danger">{{ form.first_name.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class="field">
+                    <label class="label" for="id_last_name">Прізвище*:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="id_last_name" name="last_name" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}" required>
+                    </div>
+                    {% if form.last_name.errors %}
+                        <p class="help is-danger">{{ form.last_name.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column is-half">
+                <div class="field">
+                    <label class="label" for="id_phone_number">Номер телефону*:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="id_phone_number" name="phone_number" value="{% if form.phone_number.value %}{{ form.phone_number.value }}{% endif %}" placeholder="(000) 000-0000" required>
+                    </div>
+                    {% if form.phone_number.errors %}
+                        <p class="help is-danger">{{ form.phone_number.errors }}</p>
+                    {% endif %}
+                    <p class="help is-danger" style="display: none" id="phone_number_error">Неверный формат номера</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <label class="label">Спосіб доставки:</label>
+                    <div class="control">
+                        <label class="radio">
+                            <input type="radio" name="requires_delivery" value="1" checked>
+                            Мені потрібна доставка
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="requires_delivery" value="0">
+                            Самовивіз
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns" id="deliveryAddressField">
+            <div class="column">
+                <div class="field">
+                    <label class="label" for="id_delivery_address">Адреса доставки*:</label>
+                    <div class="control">
+                        <textarea class="textarea" id="id_delivery_address" name="delivery_address" rows="2">{% if form.delivery_address.value %}{{ form.delivery_address.value }}{% endif %}</textarea>
+                    </div>
+                    {% if form.delivery_address.errors %}
+                        <p class="help is-danger">{{ form.delivery_address.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <label class="label">Способ оплати:</label>
+                    <div class="control">
+                        <label class="radio">
+                            <input type="radio" name="payment_on_get" value="0" checked>
+                            Розрахунок картою
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="payment_on_get" value="1">
+                            Готівка/карта при отримані
+                        </label>
+                    </div>
+                    {% if form.payment_on_get.errors %}
+                        <p class="help is-danger">{{ form.payment_on_get.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="level-item has-text-centered">
+            <button type="submit" class="button is-primary">Замовити</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
