@@ -10,7 +10,7 @@ class CatalogView(ListView):
     model = Book
     template_name = "books/catalog.html"
     context_object_name = "goods"
-    paginate_by = 3
+    paginate_by = 12
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")

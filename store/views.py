@@ -18,6 +18,10 @@ import pandas as pd
 
 from store.utils import process_csv
 
+import matplotlib.pyplot as plt
+import io
+import urllib, base64
+
 
 @login_required
 def store_dash(request):
@@ -307,3 +311,80 @@ def export_sold_books_csv(request):
     df.to_csv(path_or_buf=response, index=False)
 
     return response
+
+
+@login_required
+def sold_books_analytics(request):
+    store = get_object_or_404(Store, user=request.user)
+
+    sold_items = OrderItem.objects.filter(
+        product__store=store
+    ).select_related("order", "product")
+
+    # Data preparation
+    product_names = [item.product.title for item in sold_items]
+    quantities = [item.quantity for item in sold_items]
+    prices = [item.price for item in sold_items]
+    order_dates = [item.order.created_at for item in sold_items]
+
+    # Create a DataFrame for time series analysis
+    df = pd.DataFrame({
+        'Product Name': product_names,
+        'Quantity': quantities,
+        'Price': prices,
+        'Order Date': order_dates
+    })
+    df['Order Date'] = pd.to_datetime(df['Order Date'])
+    df.set_index('Order Date', inplace=True)
+
+    # Plotting
+    plots = []
+
+    # Bar plot for quantities
+    plt.figure(figsize=(10, 5))
+    plt.bar(product_names, quantities, color='blue')
+    plt.xlabel('Product Names')
+    plt.ylabel('Quantities Sold')
+    plt.title('Quantities of Sold Books')
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = urllib.parse.quote(string)
+    plots.append(uri)
+    plt.close()
+
+    # Bar plot for prices
+    plt.figure(figsize=(10, 5))
+    plt.bar(product_names, prices, color='green')
+    plt.xlabel('Product Names')
+    plt.ylabel('Prices')
+    plt.title('Prices of Sold Books')
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = urllib.parse.quote(string)
+    plots.append(uri)
+    plt.close()
+
+    # Time series plot for quantities sold over time (daily)
+    plt.figure(figsize=(10, 5))
+    df['Quantity'].resample('D').sum().plot(kind='line', color='red')
+    plt.xlabel('Order Date')
+    plt.ylabel('Total Quantities Sold')
+    plt.title('Quantities Sold Over Time (Daily)')
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = urllib.parse.quote(string)
+    plots.append(uri)
+    plt.close()
+
+    context = {
+        'plots': plots,
+        'store': store
+    }
+
+    return render(request, 'store/sold_books_analytics.html', context)

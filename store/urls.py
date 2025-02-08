@@ -24,5 +24,7 @@ urlpatterns = [
 
     path('sold-books/', views.sold_books_view, name='sold_books'),
     path('sold-books/<int:pk>/', views.SoldBooksDetailView.as_view(), name='sold_books_detail'),
-    path('export-sold-books/', views.export_sold_books_csv, name='export_sold_books_csv')
+    path('export-sold-books/', views.export_sold_books_csv, name='export_sold_books_csv'),
+    path('sold-books-analytics/', views.sold_books_analytics, name='sold_books_analytics'),
+
 ]
