@@ -3,12 +3,14 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
 from books.choices import BookStatusChoices
 from books.models import Book
+from orders.models import OrderItem
 from store.forms import AddBookForm, BookImageFormSet, CSVUploadForm, ChangeStoreForm, DeliveryOptionMultiFormSet
 from store.models import Store
 
@@ -241,4 +243,67 @@ def create_csv_response(data):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="books_export.csv"'
     df.to_csv(response, index=False, encoding='utf-8-sig', sep=',')
+    return response
+
+
+@login_required
+def sold_books_view(request):
+    store = get_object_or_404(Store, user=request.user)
+
+    sold_items = OrderItem.objects.filter(
+        product__store=store
+    ).select_related("order", "product", "order__buyer")
+
+    context = {
+        "sold_items": sold_items,
+        "store": store
+    }
+
+    return render(request, "store/sold_books.html", context)
+
+
+class SoldBooksDetailView(LoginRequiredMixin, DetailView):
+    model = OrderItem
+    template_name = "store/sold_books_detail.html"
+    context_object_name = "sold_item"
+
+    def get_queryset(self):
+        store = get_object_or_404(Store, user=self.request.user)
+        return OrderItem.objects.filter(product__store=store).select_related('order', 'product')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["store"] = get_object_or_404(Store, user=self.request.user)
+        context['phone_number'] = self.object.order.phone_number
+        context['delivery_address'] = self.object.order.delivery_address
+        context['is_paid'] = self.object.order.is_paid
+        context['total_amount'] = self.object.order.total_amount
+        return context
+
+
+@login_required
+def export_sold_books_csv(request):
+    store = get_object_or_404(Store, user=request.user)
+
+    sold_items = OrderItem.objects.filter(
+        product__store=store
+    ).select_related("order", "product", "order__buyer")
+
+    data = []
+    for item in sold_items:
+        buyer_username = item.order.buyer.user.username if item.order.buyer and item.order.buyer.user else "Unknown"
+        data.append({
+            "Product Name": item.product.title,
+            "Quantity": item.quantity,
+            "Price": item.price,
+            "Buyer": buyer_username,
+            "Order Date": item.order.created_at,
+        })
+
+    df = pd.DataFrame(data)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="sold_books.csv"'
+    df.to_csv(path_or_buf=response, index=False)
+
     return response

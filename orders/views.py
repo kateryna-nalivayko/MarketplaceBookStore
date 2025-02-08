@@ -38,6 +38,8 @@ class CreateOrderView(LoginRequiredMixin, FormView):
                         payment_on_get=form.cleaned_data['payment_on_get'] == '1',
                     )
 
+                    total_amount = 0
+
                     for cart_item in cart_items:
                         product = cart_item.product
                         name = cart_item.product.title
@@ -56,6 +58,11 @@ class CreateOrderView(LoginRequiredMixin, FormView):
                         )
                         product.quantity -= quantity
                         product.save()
+
+                        total_amount += price * quantity
+
+                    order.total_amount = total_amount
+                    order.save()
 
                     cart_items.delete()
 

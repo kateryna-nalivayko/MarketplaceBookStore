@@ -1,0 +1,53 @@
+{% extends "include/store-dash.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Продані книги</h1>
+
+        <div class="tabs is-boxed">
+            <ul>
+                <li><a href="{% url 'store:sold_books' %}">Продані книги</a></li>
+
+            </ul>
+        </div>
+
+        <a href="{% url "store:export_sold_books_csv" %}" class="button is-primary is-pulled-right">Export to CSV</a>
+
+        {% if sold_items %}
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Назва</th>
+                        <th>Кількість</th>
+                        <th>Ціна</th>
+                        <th>Покупець</th>
+                        <th>Дата замовлення</th>
+                        <th>Статус замовлення</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sold_items %}
+                        <tr>
+                            <td>{{ item.product.title }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.products_price }}</td>
+                            <td>{{ item.order.buyer.user.username }}</td>
+                            <td>{{ item.order.created_at|date:"d M Y" }}</td>
+                            <td>{{ item.order.status }}</td>
+                            <td>
+                                <a href="{% url "store:sold_books_detail" item.id %}" class="button is-link is-light">
+                                    Деталі
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Нічого поки ще не продано</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

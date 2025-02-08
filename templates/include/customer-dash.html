@@ -61,7 +61,7 @@
             <i class="fa-solid fa-house"> Головна</i>
         </a>
 
-        <a href="#" class="{% if request.resolver_match.url_name == 'store_profile' %}is-active{% endif %}" >
+        <a href="{% url "customer:customer_orders" %}" class="{% if request.resolver_match.url_name == 'customer_orders' %}is-active{% endif %}" >
           <i class="fa-solid fa-book"></i> Мої замовлення</i>
       </a>
   

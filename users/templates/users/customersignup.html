@@ -29,7 +29,25 @@
                         </div>
 
                         <div class="field">
-                            <label for="id_username" class="label">Напишіть імʼя користувача(username)</label>
+                            <label for="id_first_name" class="label">Прізвище</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" id="id_last_name" name="last_name"
+                                    placeholder="Ваше прізвище"
+                                    value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}"
+                                    required>
+                                {% if form.first_name.errors %}
+                                <div class="notification is-danger">
+                                    {{ form.last_name.errors }}
+                                </div>
+                                {% endif %}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="id_username" class="label">Напишіть імʼя користувача(username)*</label>
                             <div class="control has-icons-left">
                                 <input class="input" type="text" id="id_username" name="username"
                                     placeholder="Напишіть імʼя користувача"

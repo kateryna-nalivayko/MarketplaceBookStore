@@ -25,6 +25,8 @@ class Order(models.Model):
     delivery_address = models.TextField(null=True, blank=True, verbose_name="Адреса доставки")
     payment_on_get = models.BooleanField(default=False, verbose_name="Оплата при отримані")
     is_paid = models.BooleanField(default=False, verbose_name="Оплачено")
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Загальна вартість', default=0.00)
+
 
     class Meta:
         db_table = "order"
@@ -53,7 +55,7 @@ class OrderItem(models.Model):
     objects = OrderItemQueryset.as_manager()
 
     def products_price(self):
-        return round(self.price.amount * self.quantity, 2)
+        return round(self.product.price * self.quantity, 2)
 
     def __str__(self):
         return f"Товар {self.name} | Заказ {self.order.pk}"

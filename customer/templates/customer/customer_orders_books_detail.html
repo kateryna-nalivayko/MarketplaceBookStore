@@ -1,0 +1,87 @@
+{% extends "include/customer-dash.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <!-- Title -->
+        <h1 class="title has-text-centered">Деталі замовлення № {{ order.pk }}</h1>
+
+        <!-- Order Details -->
+        <div class="box">
+            <div class="columns">
+                <!-- Book Info -->
+                <div class="column is-half">
+                    <h2 class="subtitle">Інформація щодо книг</h2>
+                    <table class="table is-fullwidth is-striped">
+                        <thead>
+                            <tr>
+                                <th>Назва книги</th>
+                                <th>Ціна</th>
+                                <th>Кількість</th>
+                                <th>Всього</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.products_price }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Order Info -->
+                <div class="column is-half">
+                    <h2 class="subtitle">Інформація щодо замовлення</h2>
+                    <table class="table is-fullwidth is-striped">
+                        <tbody>
+                            <tr>
+                                <th>Статус замовлення</th>
+                                <td>{{ order.status }}</td>
+                            </tr>
+                            <tr>
+                                <th>Дата створення</th>
+                                <td>{{ order.created_at|date:"D, M d Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Оплачено чи ні</th>
+                                <td>{{ order.is_paid }}</td>
+                            </tr>
+                            <tr>
+                                <th>Чи потрібна доставка?</th>
+                                <td>{{ order.requires_delivery }}</td>
+                            </tr>
+                            <tr>
+                                <th>Оплата при отримані?</th>
+                                <td>{{ order.payment_on_get }}</td>
+                            </tr>
+                            <tr>
+                                <th>Номер телефону</th>
+                                <td>{{ order.phone_number }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="content">
+                <h3 class="subtitle">Адреса доставки</h3>
+                <div class="notification is-light">
+                    {{ order.delivery_address|default:"No address available for this order." }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Button -->
+        <div class="buttons is-centered">
+            <a href="{% url 'customer:customer_orders' %}" class="button is-link is-outlined">Повернутися назад до списку замовлень</a>
+        </div>
+    </div>
+</section>
+{% endblock content %}
