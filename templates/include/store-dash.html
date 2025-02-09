@@ -62,8 +62,12 @@
         </a>
 
         <a href="{% url "store:add_books" %}" class="{% if request.resolver_match.url_name == 'store_profile' %}is-active{% endif %}" >
-          <i class="fa-solid fa-book"></i> Додати товар</i>
+          <i class="fa-solid fa-book"></i> Додати книгу</i>
       </a>
+  
+      <a href="{% url "store:import_books" %}" class="{% if request.resolver_match.url_name == 'import_books' %}is-active{% endif %}" >
+        <i class="fa-solid fa-book"></i> Додати книги з xlsx</i>
+    </a>
   
       <a href="{% url "store:pending_books" %}" class="{% if request.resolver_match.url_name == 'pending_books' %}is-active{% endif %}" >
         <i class="fa-solid fa-book"></i> Менеджер книг</i>

@@ -1,0 +1,34 @@
+{% extends "include/store-dash.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">📦 Завантажте книги з файлу формату xlsx</h1>
+
+        {% if messages %}
+        <div>
+          {% for message in messages %}
+            <p class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+  
+      <!-- CSV Upload Form -->
+      <form method="post" enctype="multipart/form-data" class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>
+          
+        </p>
+        <button type="submit" class="btn btn-primary">📤 Завантажити xlsx</button>
+      </form>
+  
+      <hr>
+
+
+    </div>
+</section>
+{% endblock %}

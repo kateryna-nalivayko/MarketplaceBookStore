@@ -96,7 +96,7 @@ class Book(models.Model):
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, null=True, blank=True)
     authors = models.ManyToManyField(Author)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, blank=True, null=True)
-    status = StatusField(choices_name='STATUS', default='pendint')
+    status = StatusField(choices_name='STATUS', default='pending')
 
     class Meta:
         db_table = "book"

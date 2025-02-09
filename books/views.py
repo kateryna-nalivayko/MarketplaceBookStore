@@ -1,9 +1,13 @@
+import logging
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
+import requests
+from django.core.files.base import ContentFile
 
 
+from books.choices import DeliverChoices
 from books.forms import DeliveryOptionCatalogForm
-from books.models import Book, Genre
+from books.models import Book, BookImage, Genre
 
 
 class CatalogView(ListView):

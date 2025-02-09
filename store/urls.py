@@ -27,4 +27,7 @@ urlpatterns = [
     path('export-sold-books/', views.export_sold_books_csv, name='export_sold_books_csv'),
     path('sold-books-analytics/', views.sold_books_analytics, name='sold_books_analytics'),
 
+    path("import-books/", views.import_books_from_csv, name="import_books"),
+
+
 ]
