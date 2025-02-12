@@ -86,8 +86,11 @@ class Book(models.Model):
     number_of_pages = models.PositiveBigIntegerField(
         null=True, blank=True, verbose_name="Кількість сторінок"
     )
-    description = models.CharField(
-        max_length=200, blank=True, null=True, verbose_name="Опис"
+    description = models.TextField(
+        blank=True, 
+        null=True, 
+        verbose_name="Опис",
+        help_text="Детальний опис книги"
     )
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)

@@ -59,7 +59,7 @@
             <div class="column is-half">
                 <!-- Add to Cart Button -->
                 <div class="is-flex is-justify-content-space-between is-align-items-center">
-                    <a href="{% url 'cart:cart_add' %}" class="button is-primary add-to-cart" data-product-id="{{ product.id }}">
+                    <a href="{% url 'cart:cart_add' %}" class="button is-primary add-to-cart" data-product-id="{{ book.id }}">
                         {% csrf_token %}Додати у кошик
                     </a>
                 </div>

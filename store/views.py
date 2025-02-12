@@ -290,7 +290,7 @@ class SoldBooksDetailView(LoginRequiredMixin, DetailView):
 
 
 @login_required
-def export_sold_books_csv(request):
+def export_sold_books_excel(request):  # Renamed from export_sold_books_csv
     store = get_object_or_404(Store, user=request.user)
 
     sold_items = OrderItem.objects.filter(
@@ -299,20 +299,56 @@ def export_sold_books_csv(request):
 
     data = []
     for item in sold_items:
-        buyer_username = item.order.buyer.user.username if item.order.buyer and item.order.buyer.user else "Unknown"
+        # Handle potential None values in buyer relationship
+        buyer_username = (item.order.buyer.user.username 
+                        if item.order.buyer and item.order.buyer.user 
+                        else "Unknown")
+        
+        # Convert timezone-aware datetime to string format
+        order_date = item.order.created_at.strftime("%Y-%m-%d %H:%M")
+        created_at = item.created_at.strftime("%Y-%m-%d %H:%M")
+
         data.append({
-            "Product Name": item.product.title,
+            "Book Name": item.product.title,
             "Quantity": item.quantity,
-            "Price": item.price,
+            "Price": float(item.price),  # Convert Decimal to float for Excel
+            "Total Amount": float(item.price * item.quantity),
             "Buyer": buyer_username,
-            "Order Date": item.order.created_at,
+            "Order Date": order_date,
+            "Sale Date": created_at,
+            "Payment Status": "Paid" if item.order.is_paid else "Pending",
+            "Delivery Address": item.order.delivery_address or "N/A",
+            "Phone": item.order.phone_number or "N/A"
         })
 
     df = pd.DataFrame(data)
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="sold_books.csv"'
-    df.to_csv(path_or_buf=response, index=False)
+    # Create Excel response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="sold_books.xlsx"'
+    
+    # Use ExcelWriter with styling
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Sold Books')
+        
+        # Get workbook and worksheet
+        workbook = writer.book
+        worksheet = writer.sheets['Sold Books']
+        
+        # Auto-adjust columns width
+        for idx, column in enumerate(worksheet.columns, 1):
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            worksheet.column_dimensions[column[0].column_letter].width = adjusted_width
 
     return response
 
