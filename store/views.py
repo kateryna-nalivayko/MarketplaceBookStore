@@ -22,6 +22,8 @@ import pandas as pd
 from django.core.files.base import ContentFile
 
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
@@ -290,7 +292,7 @@ class SoldBooksDetailView(LoginRequiredMixin, DetailView):
 
 
 @login_required
-def export_sold_books_excel(request):  # Renamed from export_sold_books_csv
+def export_sold_books_excel(request):  
     store = get_object_or_404(Store, user=request.user)
 
     sold_items = OrderItem.objects.filter(
@@ -299,19 +301,19 @@ def export_sold_books_excel(request):  # Renamed from export_sold_books_csv
 
     data = []
     for item in sold_items:
-        # Handle potential None values in buyer relationship
+
         buyer_username = (item.order.buyer.user.username 
                         if item.order.buyer and item.order.buyer.user 
                         else "Unknown")
         
-        # Convert timezone-aware datetime to string format
+
         order_date = item.order.created_at.strftime("%Y-%m-%d %H:%M")
         created_at = item.created_at.strftime("%Y-%m-%d %H:%M")
 
         data.append({
             "Book Name": item.product.title,
             "Quantity": item.quantity,
-            "Price": float(item.price),  # Convert Decimal to float for Excel
+            "Price": float(item.price), 
             "Total Amount": float(item.price * item.quantity),
             "Buyer": buyer_username,
             "Order Date": order_date,
@@ -323,21 +325,21 @@ def export_sold_books_excel(request):  # Renamed from export_sold_books_csv
 
     df = pd.DataFrame(data)
 
-    # Create Excel response
+
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename="sold_books.xlsx"'
     
-    # Use ExcelWriter with styling
+
     with pd.ExcelWriter(response, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Sold Books')
         
-        # Get workbook and worksheet
+
         workbook = writer.book
         worksheet = writer.sheets['Sold Books']
         
-        # Auto-adjust columns width
+
         for idx, column in enumerate(worksheet.columns, 1):
             max_length = 0
             column = [cell for cell in column]
@@ -356,18 +358,21 @@ def export_sold_books_excel(request):  # Renamed from export_sold_books_csv
 @login_required
 def sold_books_analytics(request):
     store = get_object_or_404(Store, user=request.user)
+    logger.info(f"Fetching sold items for store: {store}")
 
     sold_items = OrderItem.objects.filter(
         product__store=store
     ).select_related("order", "product")
 
-    # Data preparation
+
     product_names = [item.product.title for item in sold_items]
     quantities = [item.quantity for item in sold_items]
     prices = [item.price for item in sold_items]
     order_dates = [item.order.created_at for item in sold_items]
 
-    # Create a DataFrame for time series analysis
+    logger.info(f"Prepared data for {len(sold_items)} sold items")
+
+
     df = pd.DataFrame({
         'Product Name': product_names,
         'Quantity': quantities,
@@ -377,50 +382,58 @@ def sold_books_analytics(request):
     df['Order Date'] = pd.to_datetime(df['Order Date'])
     df.set_index('Order Date', inplace=True)
 
-    # Plotting
+
     plots = []
 
-    # Bar plot for quantities
-    plt.figure(figsize=(10, 5))
-    plt.bar(product_names, quantities, color='blue')
-    plt.xlabel('Product Names')
-    plt.ylabel('Quantities Sold')
-    plt.title('Quantities of Sold Books')
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read())
-    uri = urllib.parse.quote(string)
-    plots.append(uri)
-    plt.close()
+    try:
 
-    # Bar plot for prices
-    plt.figure(figsize=(10, 5))
-    plt.bar(product_names, prices, color='green')
-    plt.xlabel('Product Names')
-    plt.ylabel('Prices')
-    plt.title('Prices of Sold Books')
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read())
-    uri = urllib.parse.quote(string)
-    plots.append(uri)
-    plt.close()
+        plt.figure(figsize=(10, 5))
+        plt.bar(product_names, quantities, color='blue')
+        plt.xlabel('Product Names')
+        plt.ylabel('Quantities Sold')
+        plt.title('Quantities of Sold Books')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = urllib.parse.quote(string)
+        plots.append(uri)
+        plt.close()
+        logger.info("Generated bar plot for quantities")
 
-    # Time series plot for quantities sold over time (daily)
-    plt.figure(figsize=(10, 5))
-    df['Quantity'].resample('D').sum().plot(kind='line', color='red')
-    plt.xlabel('Order Date')
-    plt.ylabel('Total Quantities Sold')
-    plt.title('Quantities Sold Over Time (Daily)')
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read())
-    uri = urllib.parse.quote(string)
-    plots.append(uri)
-    plt.close()
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(product_names, prices, color='green')
+        plt.xlabel('Product Names')
+        plt.ylabel('Prices')
+        plt.title('Prices of Sold Books')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = urllib.parse.quote(string)
+        plots.append(uri)
+        plt.close()
+        logger.info("Generated bar plot for prices")
+
+
+        plt.figure(figsize=(10, 5))
+        df['Quantity'].resample('H').sum().plot(kind='line', color='red')
+        plt.xlabel('Order Date')
+        plt.ylabel('Total Quantities Sold')
+        plt.title('Quantities Sold Over Time (Hourly)')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = urllib.parse.quote(string)
+        plots.append(uri)
+        plt.close()
+        logger.info("Generated time series plot for quantities sold over time (hourly)")
+
+    except Exception as e:
+        logger.error(f"Error generating plots: {e}")
+        messages.error(request, f"Error generating plots: {e}")
 
     context = {
         'plots': plots,
@@ -450,21 +463,21 @@ def import_books_from_csv(request):
                 
                 with transaction.atomic():
                     for _, row in df.iterrows():
-                        # Create product first
+
                         product, authors = create_product_from_row(row, store)
                         if product:
                             product.save()
                             
-                            # Set authors
+                            
                             if authors:
                                 product.authors.set(authors)
                             
-                            # Create delivery option after product is saved
+
                             delivery_option = create_delivery_option(row, product)
                             if delivery_option:
                                 delivery_option.save()
                                 
-                                # Set many-to-many relationships after delivery option is saved
+
                                 regions = get_multiple_regions(row.get("multiple_regions", ""), delivery_option.country)
                                 if regions:
                                     delivery_option.region_multiple.set(regions)
@@ -473,12 +486,12 @@ def import_books_from_csv(request):
                                 if cities:
                                     delivery_option.city_multiple.set(cities)
 
-                            # Create product image
+
                             image = create_book_image(row, product)
                             if image:
                                 image.save()
 
-                messages.success(request, "Products imported successfully!")
+                messages.success(request, "Файл з книгами іспішно доданий!")
                 return redirect("store:book_list")
 
             except Exception as e:
@@ -513,7 +526,7 @@ def create_product_from_row(row, store):
         logger.warning(f"Invalid genre/country: {row}")
         return None
 
-    # Validate language choice
+
     if row.get("language") not in dict(Book.LANGUAGE_CHOICES):
         logger.warning(f"Invalid language choice: {row.get('language')}")
         return None

@@ -17,3 +17,4 @@ def tag_categories(slug):
             'parent_category': None,
             'immediate_children': None
         }
+    
