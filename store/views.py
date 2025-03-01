@@ -364,6 +364,15 @@ def sold_books_analytics(request):
         product__store=store
     ).select_related("order", "product")
 
+    if not sold_items.exists():
+        logger.info("No sales data found for this store")
+        context = {
+            'store': store,
+            'has_data': False,
+            'plots': []
+        }
+        return render(request, 'store/sold_books_analytics.html', context)
+
 
     product_names = [item.product.title for item in sold_items]
     quantities = [item.quantity for item in sold_items]
