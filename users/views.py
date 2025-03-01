@@ -130,6 +130,7 @@ def store_signup_view(request):
                     ActivationMailManager.send_verification_link(
                         inactive_user=user, form=form, request=request
                     )
+                    messages.success(request, "Все повний люкс. Реєстрація в процесі")
                     return redirect('user:verification_pending')
             except Exception as e:
                 if user and user.pk:

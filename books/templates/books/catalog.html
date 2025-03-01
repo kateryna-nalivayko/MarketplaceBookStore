@@ -256,48 +256,47 @@
                 </div>
 
 
+                <div class="container mb-3 mt-3">
+                    <nav class="pagination is-centered mt-6 mb-6" role="navigation" aria-label="pagination">
+                        <a href="{% if goods.has_previous %}
+                                    {% querystring page=goods.previous_page_number %}
+                                {% else %}
+                                    #
+                                {% endif %}"
+                           class="pagination-previous{% if not goods.has_previous %} is-disabled{% endif %}">
+                          Попередник
+                        </a>
+                      
+                        <a href="{% if goods.has_next %}
+                                    {% querystring page=goods.next_page_number %}
+                                {% else %}
+                                    #
+                                {% endif %}"
+                           class="pagination-next{% if not goods.has_next %} is-disabled{% endif %}">
+                          Наступна
+                        </a>
+                      
+                        <ul class="pagination-list">
+                            {% for page in goods.paginator.page_range %}
+                              {% if page >= goods.number|add:-2 and page <= goods.number|add:2 %}
+                                {% if page == goods.number %}
+                                  <li>
+                                    <a href="#" class="pagination-link is-current" aria-label="Page {{ page }}" aria-current="page">{{ page }}</a>
+                                  </li>
+                                {% else %}
+                                  <li>
+                                    <a href="{% querystring page=page %}" class="pagination-link" aria-label="Goto page {{ page }}">{{ page }}</a>
+                                  </li>
+                                {% endif %}
+                              {% endif %}
+                            {% endfor %}
+                          </ul>
+                      </nav>
+                  </div>
+               
 
-                    <div class="container mb-3 mt-3">
-                        <nav class="pagination is-centered mt-6 mb-6" role="navigation" aria-label="pagination">
-                            <a href="{% if goods.has_previous %}
-                                        {% querystring page=goods.previous_page_number %}
-                                    {% else %}
-                                        #
-                                    {% endif %}"
-                               class="pagination-previous{% if not goods.has_previous %} is-disabled{% endif %}">
-                              Попередник
-                            </a>
-                          
-                            <a href="{% if goods.has_next %}
-                                        {% querystring page=goods.next_page_number %}
-                                    {% else %}
-                                        #
-                                    {% endif %}"
-                               class="pagination-next{% if not goods.has_next %} is-disabled{% endif %}">
-                              Наступна
-                            </a>
-                          
-                            <ul class="pagination-list">
-                                {% for page in goods.paginator.page_range %}
-                                  {% if page >= goods.number|add:-2 and page <= goods.number|add:2 %}
-                                    {% if page == goods.number %}
-                                      <li>
-                                        <a href="#" class="pagination-link is-current" aria-label="Page {{ page }}" aria-current="page">{{ page }}</a>
-                                      </li>
-                                    {% else %}
-                                      <li>
-                                        <a href="{% querystring page=page %}" class="pagination-link" aria-label="Goto page {{ page }}">{{ page }}</a>
-                                      </li>
-                                    {% endif %}
-                                  {% endif %}
-                                {% endfor %}
-                              </ul>
-                          </nav>
-                      </div>
-                   
-
-        </div>
-        </div>
+    </div>
+    </div>
 
 </section>
 
