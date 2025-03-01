@@ -369,7 +369,6 @@ def sold_books_analytics(request):
         context = {
             'store': store,
             'has_data': False,
-            'plots': []
         }
         return render(request, 'store/sold_books_analytics.html', context)
 
@@ -446,7 +445,8 @@ def sold_books_analytics(request):
 
     context = {
         'plots': plots,
-        'store': store
+        'store': store,
+        'has_data': True
     }
 
     return render(request, 'store/sold_books_analytics.html', context)

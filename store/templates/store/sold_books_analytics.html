@@ -8,12 +8,18 @@
         
         {% if has_data %}
             <div class="box">
-                <div class="columns is-centered">
+                <div class="columns is-multiline is-centered">
                     {% for plot in plots %}
                     <div class="column is-half">
-                        <figure class="image is-4by3">
-                            <img src="data:image/png;base64,{{ plot }}" alt="Sold Books Analytics">
-                        </figure>
+                        <div class="card">
+                            <div class="card-image">
+                                <figure class="image">
+                                    <img src="data:image/png;base64,{{ plot }}" 
+                                         alt="Sold Books Analytics"
+                                         style="width: 100%; height: auto;">
+                                </figure>
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -23,15 +29,18 @@
                 <div class="notification is-warning">
                     <div class="content has-text-centered">
                         <p class="is-size-4">
-                            <i class="fas fa-chart-bar mr-2"></i>
+                            <i class="fas fa-exclamation-circle mr-2"></i>
                             Статистика відсутня
                         </p>
                         <p>У вас ще немає проданих книжок для формування аналітики.</p>
-                        <p class="mt-4">
+                        <div class="buttons is-centered mt-4">
                             <a href="{% url 'store:book_list' %}" class="button is-primary">
-                                Перейти до списку книжок
+                                <span class="icon">
+                                    <i class="fas fa-book"></i>
+                                </span>
+                                <span>Перейти до списку книжок</span>
                             </a>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>

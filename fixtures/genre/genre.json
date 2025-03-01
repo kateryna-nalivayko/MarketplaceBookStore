@@ -1,1 +1,622 @@
-[{"model": "books.genre", "pk": 1, "fields": {"parent": null, "name": "�� �����", "slug": "all", "position": 0}}, {"model": "books.genre", "pk": 2, "fields": {"parent": 1, "name": "������� ���������", "slug": "hudozhnya-literatura", "position": 0}}, {"model": "books.genre", "pk": 3, "fields": {"parent": 2, "name": "������", "slug": "romani", "position": 0}}, {"model": "books.genre", "pk": 4, "fields": {"parent": 3, "name": "������� ������", "slug": "suchasni-romani", "position": 0}}, {"model": "books.genre", "pk": 5, "fields": {"parent": 3, "name": "�������� ������", "slug": "klasichni-romani", "position": 0}}, {"model": "books.genre", "pk": 6, "fields": {"parent": 3, "name": "��������� ������", "slug": "istorichni-romani", "position": 0}}, {"model": "books.genre", "pk": 7, "fields": {"parent": 3, "name": "����������� ������", "slug": "prigodnicki-romani", "position": 0}}, {"model": "books.genre", "pk": 8, "fields": {"parent": 2, "name": "�����", "slug": "poeziya", "position": 0}}, {"model": "books.genre", "pk": 9, "fields": {"parent": 8, "name": "˳����� �����", "slug": "lirichna-poeziya", "position": 0}}, {"model": "books.genre", "pk": 10, "fields": {"parent": 8, "name": "����� �����", "slug": "epichna-poeziya", "position": 0}}, {"model": "books.genre", "pk": 11, "fields": {"parent": 8, "name": "³��� ��� ����", "slug": "virshi-dlya-ditej", "position": 0}}, {"model": "books.genre", "pk": 12, "fields": {"parent": 2, "name": "����������", "slug": "dramaturgiya", "position": 0}}, {"model": "books.genre", "pk": 13, "fields": {"parent": 12, "name": 
+[
+    {
+        "model": "books.genre",
+        "pk": 1,
+        "fields": {
+            "parent": null,
+            "name": "Всі книги",
+            "slug": "all",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 2,
+        "fields": {
+            "parent": 1,
+            "name": "Художня література",
+            "slug": "fiction",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 3,
+        "fields": {
+            "parent": 1,
+            "name": "Нехудожня література",
+            "slug": "nehudozhnya-literatura",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 4,
+        "fields": {
+            "parent": 1,
+            "name": "Література для дітей",
+            "slug": "literatura-dlya-ditej",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 5,
+        "fields": {
+            "parent": 2,
+            "name": "Класична література",
+            "slug": "klasichna-literatura",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 6,
+        "fields": {
+            "parent": 2,
+            "name": "Сучасна проза",
+            "slug": "suchasna-proza",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 7,
+        "fields": {
+            "parent": 2,
+            "name": "Детективи та трилери",
+            "slug": "detektivi-ta-trileri",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 8,
+        "fields": {
+            "parent": 2,
+            "name": "Фантастика",
+            "slug": "fantastika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 9,
+        "fields": {
+            "parent": 2,
+            "name": "Фентезі",
+            "slug": "fentezi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 10,
+        "fields": {
+            "parent": 2,
+            "name": "Жахи",
+            "slug": "zhahi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 11,
+        "fields": {
+            "parent": 2,
+            "name": "Пригодницька література",
+            "slug": "prigodnicka-literatura",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 12,
+        "fields": {
+            "parent": 2,
+            "name": "Історичний роман",
+            "slug": "istorichnij-roman",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 13,
+        "fields": {
+            "parent": 2,
+            "name": "Романтика",
+            "slug": "romantika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 14,
+        "fields": {
+            "parent": 2,
+            "name": "Драма",
+            "slug": "drama",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 15,
+        "fields": {
+            "parent": 2,
+            "name": "Юмористична література",
+            "slug": "yumoristichna-literatura",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 16,
+        "fields": {
+            "parent": 3,
+            "name": "Наука та техніка",
+            "slug": "nauka-ta-tehnika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 17,
+        "fields": {
+            "parent": 3,
+            "name": "Філософія та психологія",
+            "slug": "filosofiya-ta-psihologiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 18,
+        "fields": {
+            "parent": 3,
+            "name": "Історія",
+            "slug": "istoriya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 19,
+        "fields": {
+            "parent": 3,
+            "name": "Біографії та мемуари",
+            "slug": "biografiyi-ta-memuari",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 20,
+        "fields": {
+            "parent": 3,
+            "name": "Саморозвиток",
+            "slug": "samorozvitok",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 21,
+        "fields": {
+            "parent": 3,
+            "name": "Бізнес та економіка",
+            "slug": "biznes-ta-ekonomika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 22,
+        "fields": {
+            "parent": 3,
+            "name": "Медицина та здоров’я",
+            "slug": "medicina-ta-zdorovya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 23,
+        "fields": {
+            "parent": 3,
+            "name": "Кулінарія",
+            "slug": "kulinariya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 24,
+        "fields": {
+            "parent": 3,
+            "name": "Подорожі та географія",
+            "slug": "podorozhi-ta-geografiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 25,
+        "fields": {
+            "parent": 3,
+            "name": "Релігія та духовність",
+            "slug": "religiya-ta-duhovnist",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 26,
+        "fields": {
+            "parent": 3,
+            "name": "Мистецтво та фотографія",
+            "slug": "mistectvo-ta-fotografiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 27,
+        "fields": {
+            "parent": 3,
+            "name": "Хобі та рукоділля",
+            "slug": "hobi-ta-rukodillya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 28,
+        "fields": {
+            "parent": 4,
+            "name": "Казки",
+            "slug": "kazki",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 29,
+        "fields": {
+            "parent": 4,
+            "name": "Комікси та графічні романи",
+            "slug": "komiksi-ta-grafichni-romani",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 30,
+        "fields": {
+            "parent": 4,
+            "name": "Підліткова література",
+            "slug": "pidlitkova-literatura",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 31,
+        "fields": {
+            "parent": 7,
+            "name": "Кримінальний детектив",
+            "slug": "kriminalnij-detektiv",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 32,
+        "fields": {
+            "parent": 7,
+            "name": "Поліцейський детектив",
+            "slug": "policejskij-detektiv",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 33,
+        "fields": {
+            "parent": 7,
+            "name": "Психологічний трилер",
+            "slug": "psihologichnij-triler",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 34,
+        "fields": {
+            "parent": 7,
+            "name": "Судовий трилер",
+            "slug": "sudovij-triler",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 35,
+        "fields": {
+            "parent": 7,
+            "name": "Шпигунський роман",
+            "slug": "shpigunskij-roman",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 36,
+        "fields": {
+            "parent": 8,
+            "name": "Космічна опера",
+            "slug": "kosmichna-opera",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 37,
+        "fields": {
+            "parent": 8,
+            "name": "Кіберпанк",
+            "slug": "kiberpank",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 38,
+        "fields": {
+            "parent": 8,
+            "name": "Дизельпанк",
+            "slug": "dizelpank",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 39,
+        "fields": {
+            "parent": 8,
+            "name": "Біопанк",
+            "slug": "biopank",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 40,
+        "fields": {
+            "parent": 8,
+            "name": "Апокаліпсис і постапокаліпсис",
+            "slug": "apokalipsis-i-postapokalipsis",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 41,
+        "fields": {
+            "parent": 8,
+            "name": "Альтернативна історія",
+            "slug": "alternativna-istoriya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 42,
+        "fields": {
+            "parent": 9,
+            "name": "Епічне фентезі",
+            "slug": "epichne-fentezi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 43,
+        "fields": {
+            "parent": 9,
+            "name": "Темне фентезі",
+            "slug": "temne-fentezi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 44,
+        "fields": {
+            "parent": 9,
+            "name": "Міське фентезі",
+            "slug": "miske-fentezi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 45,
+        "fields": {
+            "parent": 9,
+            "name": "Героічне фентезі",
+            "slug": "geroichne-fentezi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 46,
+        "fields": {
+            "parent": 9,
+            "name": "ЛітРПГ",
+            "slug": "litrpg",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 47,
+        "fields": {
+            "parent": 10,
+            "name": "Готичні жахи",
+            "slug": "gotichni-zhahi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 48,
+        "fields": {
+            "parent": 10,
+            "name": "Лавкрафтіанський жах",
+            "slug": "lavkraftianskij-zhah",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 49,
+        "fields": {
+            "parent": 10,
+            "name": "Психологічний хорор",
+            "slug": "psihologichnij-horor",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 50,
+        "fields": {
+            "parent": 10,
+            "name": "Зомбі-апокаліпсис",
+            "slug": "zombi-apokalipsis",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 51,
+        "fields": {
+            "parent": 13,
+            "name": "Історична романтика",
+            "slug": "istorichna-romantika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 52,
+        "fields": {
+            "parent": 13,
+            "name": "Фентезі-романтика",
+            "slug": "fentezi-romantika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 53,
+        "fields": {
+            "parent": 13,
+            "name": "Паранормальна романтика",
+            "slug": "paranormalna-romantika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 54,
+        "fields": {
+            "parent": 13,
+            "name": "Любовний роман",
+            "slug": "lyubovnij-roman",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 55,
+        "fields": {
+            "parent": 16,
+            "name": "Фізика",
+            "slug": "fizika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 56,
+        "fields": {
+            "parent": 16,
+            "name": "Астрономія",
+            "slug": "astronomiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 57,
+        "fields": {
+            "parent": 16,
+            "name": "Біологія",
+            "slug": "biologiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 58,
+        "fields": {
+            "parent": 16,
+            "name": "Комп’ютерні науки",
+            "slug": "kompyuterni-nauki",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 59,
+        "fields": {
+            "parent": 16,
+            "name": "Математика",
+            "slug": "matematika",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 60,
+        "fields": {
+            "parent": 30,
+            "name": "Дистопія",
+            "slug": "distopiya",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 61,
+        "fields": {
+            "parent": 30,
+            "name": "Любовні історії",
+            "slug": "lyubovni-istoriyi",
+            "position": 0
+        }
+    },
+    {
+        "model": "books.genre",
+        "pk": 62,
+        "fields": {
+            "parent": 30,
+            "name": "Пригоди",
+            "slug": "prigodi",
+            "position": 0
+        }
+    }
+]
