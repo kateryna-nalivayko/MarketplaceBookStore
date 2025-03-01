@@ -103,12 +103,11 @@ def book(request, product_slug):
     while category:
         breadcrumb_categories.insert(0, category)
         category = category.parent
-
+        
     context = {
         "book": book,
         "delivery_options": book.delivery_options.all(),
         "breadcrumb_categories": breadcrumb_categories,
     }
-
 
     return render(request, "books/book.html", context)

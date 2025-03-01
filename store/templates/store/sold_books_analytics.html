@@ -1,4 +1,3 @@
-
 {% extends "include/store-dash.html" %}
 {% load static %}
 
@@ -6,17 +5,37 @@
 <section class="section">
     <div class="container">
         <h1 class="title has-text-centered">Аналітика проданих книжок</h1>
-        <div class="box">
-            <div class="columns is-centered">
-                {% for plot in plots %}
-                <div class="column is-half">
-                    <figure class="image is-4by3">
-                        <img src="data:image/png;base64,{{ plot }}" alt="Sold Books Analytics">
-                    </figure>
+        
+        {% if has_data %}
+            <div class="box">
+                <div class="columns is-centered">
+                    {% for plot in plots %}
+                    <div class="column is-half">
+                        <figure class="image is-4by3">
+                            <img src="data:image/png;base64,{{ plot }}" alt="Sold Books Analytics">
+                        </figure>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <div class="box">
+                <div class="notification is-warning">
+                    <div class="content has-text-centered">
+                        <p class="is-size-4">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Статистика відсутня
+                        </p>
+                        <p>У вас ще немає проданих книжок для формування аналітики.</p>
+                        <p class="mt-4">
+                            <a href="{% url 'store:book_list' %}" class="button is-primary">
+                                Перейти до списку книжок
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}
