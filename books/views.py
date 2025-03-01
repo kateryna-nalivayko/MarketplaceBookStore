@@ -14,7 +14,7 @@ class CatalogView(ListView):
     model = Book
     template_name = "books/catalog.html"
     context_object_name = "goods"
-    paginate_by = 5
+    paginate_by = 6
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")
@@ -90,6 +90,7 @@ class CatalogView(ListView):
         if self.parent_category:
             return self.parent_category.children.all()
         return Genre.objects.filter(parent=None)
+
 
 
 def book(request, product_slug):
