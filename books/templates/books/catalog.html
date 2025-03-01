@@ -2,7 +2,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-
 {% block modal_cart %}
 {% include "include/cart_button.html" %}
 {% endblock modal_cart %}
@@ -257,47 +256,67 @@
 
 
 
-                    <div class="container mb-3 mt-3">
-                        <nav class="pagination is-centered mt-6 mb-6" role="navigation" aria-label="pagination">
-                            <a href="{% if goods.has_previous %}
-                                        {% querystring page=goods.previous_page_number %}
-                                    {% else %}
-                                        #
-                                    {% endif %}"
-                               class="pagination-previous{% if not goods.has_previous %} is-disabled{% endif %}">
-                              Попередник
-                            </a>
-                          
-                            <a href="{% if goods.has_next %}
-                                        {% querystring page=goods.next_page_number %}
-                                    {% else %}
-                                        #
-                                    {% endif %}"
-                               class="pagination-next{% if not goods.has_next %} is-disabled{% endif %}">
-                              Наступна
-                            </a>
-                          
-                            <ul class="pagination-list">
-                                {% for page in goods.paginator.page_range %}
-                                  {% if page >= goods.number|add:-2 and page <= goods.number|add:2 %}
-                                    {% if page == goods.number %}
-                                      <li>
-                                        <a href="#" class="pagination-link is-current" aria-label="Page {{ page }}" aria-current="page">{{ page }}</a>
-                                      </li>
-                                    {% else %}
-                                      <li>
-                                        <a href="{% querystring page=page %}" class="pagination-link" aria-label="Goto page {{ page }}">{{ page }}</a>
-                                      </li>
-                                    {% endif %}
-                                  {% endif %}
-                                {% endfor %}
-                              </ul>
-                          </nav>
-                      </div>
-                   
 
-        </div>
-        </div>
+<div class="container mb-3 mt-3">
+    <nav class="pagination is-centered mt-6 mb-6" role="navigation" aria-label="pagination">
+        <!-- Previous page button -->
+        <a href="{% if page_obj.has_previous %}{% querystring page=page_obj.previous_page_number %}{% else %}#{% endif %}"
+           class="pagination-previous{% if not page_obj.has_previous %} is-disabled{% endif %}"
+           {% if not page_obj.has_previous %}disabled{% endif %}>
+            Попередник
+        </a>
+      
+        <!-- Next page button -->
+        <a href="{% if page_obj.has_next %}{% querystring page=page_obj.next_page_number %}{% else %}#{% endif %}"
+           class="pagination-next{% if not page_obj.has_next %} is-disabled{% endif %}"
+           {% if not page_obj.has_next %}disabled{% endif %}>
+            Наступник
+        </a>
+      
+        <!-- Page numbers -->
+        <ul class="pagination-list">
+            <!-- First page and ellipsis -->
+            {% if page_obj.number > 3 %}
+                <li><a href="{% querystring page=1 %}" class="pagination-link" aria-label="Go to page 1">1</a></li>
+                {% if page_obj.number > 4 %}
+                    <li><span class="pagination-ellipsis">&hellip;</span></li>
+                {% endif %}
+            {% endif %}
+            
+            <!-- Pages around current page -->
+            {% for i in page_obj.paginator.page_range %}
+                {% if i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+                    <li>
+                        <a href="{% querystring page=i %}" 
+                           class="pagination-link {% if i == page_obj.number %}is-current{% endif %}" 
+                           aria-label="{% if i == page_obj.number %}Page {{ i }}{% else %}Go to page {{ i }}{% endif %}"
+                           {% if i == page_obj.number %}aria-current="page"{% endif %}>
+                            {{ i }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Last page and ellipsis -->
+            {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
+                {% if page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+                    <li><span class="pagination-ellipsis">&hellip;</span></li>
+                {% endif %}
+                <li>
+                    <a href="{% querystring page=page_obj.paginator.num_pages %}" 
+                       class="pagination-link" 
+                       aria-label="Go to page {{ page_obj.paginator.num_pages }}">
+                        {{ page_obj.paginator.num_pages }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+               
+
+    </div>
+    </div>
 
 </section>
 

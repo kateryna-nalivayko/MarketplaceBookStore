@@ -595,16 +595,15 @@ def create_book_image(row, product):
             product_image.image.save(f"{product.title}.jpg", ContentFile(response.content), save=False)
             return product_image
     except requests.RequestException as e:
-        logger.warning(f"Could not download image for {product.name}: {e}")
+        logger.warning(f"Could not download image for {product.title}: {e}")  # Changed from product.name to product.title
 
     return None
-
 
 
 def get_existing_genre(name):
     genre = Genre.objects.filter(name=name).first()
     if not genre:
-        logger.warning(f"Genre '{name}' not fount in the db")
+        logger.warning(f"Genre '{name}' not found in the db")  # Changed "not fount" to "not found"
     return genre
 
 
