@@ -25,8 +25,14 @@ from django.core.files.base import ContentFile
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import seaborn as sns
 import io
 import urllib, base64
+
+from cities_light.models import Country, Region, City
+from books.models import DEliveryOption
+logger = logging.getLogger(__name__)
+import pandas as pd
 
 
 @login_required
@@ -196,67 +202,6 @@ def change_store(request):
 
 
 @login_required
-def export_books_to_csv(request):
-    store = get_object_or_404(Store, user=request.user)
-    books = get_books_with_related_data(store)
-    data = prepare_books_data(books)
-    response = create_csv_response(data)
-    return response
-
-def get_books_with_related_data(store):
-    return Book.objects.filter(store=store).prefetch_related(
-        "authors", "genre", "publisher", 
-        "delivery_options__region_multiple", 
-        "delivery_options__city_multiple"
-    )
-
-def prepare_books_data(books):
-    data = []
-    for book in books:
-        data.append({
-            "Title": book.title,
-            "Author(s)": get_authors(book),
-            "Genre": book.genre.name if book.genre else "",
-            "Publisher": book.publisher.name if book.publisher else "Unknown",
-            "Published Year": book.published_year,
-            "Language": dict(Book.LANGUAGE_CHOICES).get(book.language, book.language),
-            "Pages": book.number_of_pages or "N/A",
-            "Quantity": book.quantity,
-            "Price (USD)": book.price,
-            "Status": book.get_status_display(),
-            "Delivery Options": get_delivery_options(book),
-            "Delivery Regions": get_delivery_regions(book),
-            "Delivery Cities": get_delivery_cities(book),
-            "Delivery Countries": get_delivery_countries(book),
-            "Created At": book.created_at.strftime("%Y-%m-%d"),
-            "Updated At": book.updated_at.strftime("%Y-%m-%d"),
-        })
-    return data
-
-def get_authors(book):
-    return ", ".join([author.name for author in book.authors.all()])
-
-def get_delivery_options(book):
-    return ", ".join([option.get_delivery_option_display() for option in book.delivery_options.all()])
-
-def get_delivery_regions(book):
-    return ", ".join([region.name for option in book.delivery_options.all() for region in option.region_multiple.all()])
-
-def get_delivery_cities(book):
-    return ", ".join([city.name for option in book.delivery_options.all() for city in option.city_multiple.all()])
-
-def get_delivery_countries(book):
-    return ", ".join([option.country.name for option in book.delivery_options.all()])
-
-def create_csv_response(data):
-    df = pd.DataFrame(data)
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="books_export.csv"'
-    df.to_csv(response, index=False, encoding='utf-8-sig', sep=',')
-    return response
-
-
-@login_required
 def sold_books_view(request):
     store = get_object_or_404(Store, user=request.user)
 
@@ -369,93 +314,139 @@ def sold_books_analytics(request):
         context = {
             'store': store,
             'has_data': False,
+            'plots': []
         }
         return render(request, 'store/sold_books_analytics.html', context)
 
 
-    product_names = [item.product.title for item in sold_items]
-    quantities = [item.quantity for item in sold_items]
-    prices = [item.price for item in sold_items]
-    order_dates = [item.order.created_at for item in sold_items]
-
-    logger.info(f"Prepared data for {len(sold_items)} sold items")
-
-
     df = pd.DataFrame({
-        'Product Name': product_names,
-        'Quantity': quantities,
-        'Price': prices,
-        'Order Date': order_dates
+        'Product Name': [item.product.title for item in sold_items],
+        'Quantity': [item.quantity for item in sold_items],
+        'Price': [float(item.price) for item in sold_items],
+        'Total': [float(item.quantity * item.price) for item in sold_items],
+        'Order Date': [item.order.created_at for item in sold_items]
     })
+    
     df['Order Date'] = pd.to_datetime(df['Order Date'])
     df.set_index('Order Date', inplace=True)
+    
+    logger.info(f"Prepared data for {len(sold_items)} sold items")
+    
 
-
+    sns.set(style="whitegrid")
     plots = []
 
     try:
-
-        plt.figure(figsize=(10, 5))
-        plt.bar(product_names, quantities, color='blue')
-        plt.xlabel('Product Names')
-        plt.ylabel('Quantities Sold')
-        plt.title('Quantities of Sold Books')
+        # Truncate long product names for better visualization
+        df['Short Name'] = df['Product Name'].apply(lambda x: (x[:20] + '...') if len(x) > 20 else x)
+        
+        # Group by product for aggregate stats
+        product_stats = df.groupby('Short Name').agg({
+            'Quantity': 'sum',
+            'Total': 'sum'
+        }).sort_values('Quantity', ascending=False)
+        
+        # 1. Bar plot for quantities with seaborn
+        plt.figure(figsize=(12, 6))
+        ax = sns.barplot(x=product_stats.index, y='Quantity', data=product_stats.reset_index(), palette='Blues_d')
+        plt.title('Quantities of Sold Books', fontsize=16)
+        plt.xlabel('Book Titles')
+        plt.ylabel('Quantity Sold')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        # Save plot to base64 string
         buf = io.BytesIO()
-        plt.savefig(buf, format='png')
+        plt.savefig(buf, format='png', dpi=100)
         buf.seek(0)
         string = base64.b64encode(buf.read())
         uri = urllib.parse.quote(string)
         plots.append(uri)
         plt.close()
         logger.info("Generated bar plot for quantities")
-
-
-        plt.figure(figsize=(10, 5))
-        plt.bar(product_names, prices, color='green')
-        plt.xlabel('Product Names')
-        plt.ylabel('Prices')
-        plt.title('Prices of Sold Books')
+        
+        # 2. Revenue by product with seaborn
+        plt.figure(figsize=(12, 6))
+        ax = sns.barplot(x=product_stats.index, y='Total', data=product_stats.reset_index(), palette='Greens_d')
+        plt.title('Revenue by Book', fontsize=16)
+        plt.xlabel('Book Titles')
+        plt.ylabel('Total Revenue ($)')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
         buf = io.BytesIO()
-        plt.savefig(buf, format='png')
+        plt.savefig(buf, format='png', dpi=100)
         buf.seek(0)
         string = base64.b64encode(buf.read())
         uri = urllib.parse.quote(string)
         plots.append(uri)
         plt.close()
-        logger.info("Generated bar plot for prices")
-
-
-        plt.figure(figsize=(10, 5))
-        df['Quantity'].resample('H').sum().plot(kind='line', color='red')
-        plt.xlabel('Order Date')
-        plt.ylabel('Total Quantities Sold')
-        plt.title('Quantities Sold Over Time (Hourly)')
+        logger.info("Generated revenue plot")
+        
+        # 3. Time series of sales
+        plt.figure(figsize=(12, 6))
+        # Daily resampling for more meaningful trends
+        time_series = df.resample('D')['Quantity'].sum()
+        sns.lineplot(x=time_series.index, y=time_series.values, color='purple', linewidth=2.5)
+        plt.title('Daily Sales Over Time', fontsize=16)
+        plt.xlabel('Date')
+        plt.ylabel('Quantity Sold')
+        plt.tight_layout()
         buf = io.BytesIO()
-        plt.savefig(buf, format='png')
+        plt.savefig(buf, format='png', dpi=100)
         buf.seek(0)
         string = base64.b64encode(buf.read())
         uri = urllib.parse.quote(string)
         plots.append(uri)
         plt.close()
-        logger.info("Generated time series plot for quantities sold over time (hourly)")
+        logger.info("Generated time series plot")
+        
+        # 4. Add a heatmap of sales by weekday and hour
+        if len(df) > 5:  # Only if we have enough data
+            df['Weekday'] = df.index.day_name()
+            df['Hour'] = df.index.hour
+            
+            # Create a pivot table for the heatmap
+            weekday_hour_sales = df.pivot_table(
+                index='Weekday', 
+                columns='Hour', 
+                values='Quantity', 
+                aggfunc='sum',
+                fill_value=0
+            )
+            
+            # Reorder weekdays
+            weekday_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            weekday_hour_sales = weekday_hour_sales.reindex(weekday_order)
+            
+            plt.figure(figsize=(14, 8))
+            sns.heatmap(weekday_hour_sales, cmap='YlGnBu', annot=True, fmt='.0f', linewidths=.5)
+            plt.title('Sales Heatmap by Weekday and Hour', fontsize=16)
+            plt.xlabel('Hour of Day')
+            plt.ylabel('Day of Week')
+            plt.tight_layout()
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=100)
+            buf.seek(0)
+            string = base64.b64encode(buf.read())
+            uri = urllib.parse.quote(string)
+            plots.append(uri)
+            plt.close()
+            logger.info("Generated sales heatmap")
 
     except Exception as e:
         logger.error(f"Error generating plots: {e}")
-        messages.error(request, f"Error generating plots: {e}")
+        messages.error(request, f"Error generating plots: {str(e)}")
 
     context = {
         'plots': plots,
         'store': store,
-        'has_data': True
+        'has_data': True,
+        'num_items_sold': df['Quantity'].sum(),
+        'total_revenue': df['Total'].sum(),
+        'num_unique_books': df['Product Name'].nunique()
     }
 
     return render(request, 'store/sold_books_analytics.html', context)
 
-
-from cities_light.models import Country, Region, City
-from books.models import DEliveryOption
-logger = logging.getLogger(__name__)
-import pandas as pd
 
 
 @login_required

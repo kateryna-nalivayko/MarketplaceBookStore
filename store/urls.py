@@ -20,8 +20,6 @@ urlpatterns = [
 
     path('change-store/', views.change_store, name='change_store'),
 
-    path("export-books/", views.export_books_to_csv, name="export_books"),
-
     path('sold-books/', views.sold_books_view, name='sold_books'),
     path('sold-books/<int:pk>/', views.SoldBooksDetailView.as_view(), name='sold_books_detail'),
     path('export-sold-books/', views.export_sold_books_excel, name='export_sold_books_csv'),

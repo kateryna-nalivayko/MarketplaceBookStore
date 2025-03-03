@@ -7,40 +7,66 @@
         <h1 class="title has-text-centered">Аналітика проданих книжок</h1>
         
         {% if has_data %}
-            <div class="box">
-                <div class="columns is-multiline is-centered">
-                    {% for plot in plots %}
-                    <div class="column is-half">
-                        <div class="card">
-                            <div class="card-image">
-                                <figure class="image">
-                                    <img src="data:image/png;base64,{{ plot }}" 
-                                         alt="Sold Books Analytics"
-                                         style="width: 100%; height: auto;">
-                                </figure>
-                            </div>
-                        </div>
+            <!-- Summary Statistics Cards -->
+            <div class="columns mb-4">
+                <div class="column">
+                    <div class="box has-background-primary-light">
+                        <h2 class="subtitle has-text-centered">Загальна кількість проданих книжок</h2>
+                        <p class="has-text-centered has-text-weight-bold is-size-3">{{ num_items_sold }}</p>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="column">
+                    <div class="box has-background-success-light">
+                        <h2 class="subtitle has-text-centered">Загальний дохід</h2>
+                        <p class="has-text-centered has-text-weight-bold is-size-3">${{ total_revenue|floatformat:2 }}</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-background-info-light">
+                        <h2 class="subtitle has-text-centered">Кількість унікальних назв</h2>
+                        <p class="has-text-centered has-text-weight-bold is-size-3">{{ num_unique_books }}</p>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Analytics Plots -->
+            <div class="box">
+                <h2 class="subtitle has-text-centered">Графіки продажів</h2>
+                
+                {% for plot in plots %}
+                <div class="mb-6">
+                    <div class="columns is-centered">
+                        <div class="column is-10">
+                            <figure class="image">
+                                <img src="data:image/png;base64,{{ plot }}" alt="Аналітика продажів">
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="notification is-info is-light">
+                <p class="has-text-centered">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Аналітика оновлюється автоматично при кожному новому продажу.
+                </p>
+            </div>
+            
         {% else %}
             <div class="box">
                 <div class="notification is-warning">
                     <div class="content has-text-centered">
                         <p class="is-size-4">
-                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <i class="fas fa-chart-bar mr-2"></i>
                             Статистика відсутня
                         </p>
                         <p>У вас ще немає проданих книжок для формування аналітики.</p>
-                        <div class="buttons is-centered mt-4">
+                        <p class="mt-4">
                             <a href="{% url 'store:book_list' %}" class="button is-primary">
-                                <span class="icon">
-                                    <i class="fas fa-book"></i>
-                                </span>
-                                <span>Перейти до списку книжок</span>
+                                Перейти до списку книжок
                             </a>
-                        </div>
+                        </p>
                     </div>
                 </div>
             </div>
