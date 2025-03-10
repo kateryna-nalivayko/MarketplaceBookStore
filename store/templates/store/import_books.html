@@ -7,28 +7,35 @@
         <h1 class="title">📦 Завантажте книги з файлу формату xlsx</h1>
 
         {% if messages %}
-        <div>
-          {% for message in messages %}
-            <p class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
-              {{ message }}
-            </p>
-          {% endfor %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+            <div class="notification {% if message.tags %}is-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button class="delete"></button>
+            </div>
+            {% endfor %}
         </div>
-      {% endif %}
-  
-      <!-- CSV Upload Form -->
-      <form method="post" enctype="multipart/form-data" class="form-group">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <p>
-          
-        </p>
-        <button type="submit" class="btn btn-primary">📤 Завантажити xlsx</button>
-      </form>
-  
-      <hr>
+        {% endif %}
 
-
+        <!-- Upload Form -->
+        <div class="box">
+            <form method="post" enctype="multipart/form-data" class="form">
+                {% csrf_token %}
+                <div class="field">
+                    {{ form.as_p }}
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary is-medium is-fullwidth">
+                            <span class="icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span>Завантажити xlsx</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 {% endblock %}

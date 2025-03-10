@@ -2,7 +2,7 @@ from email import message
 import logging
 from django.contrib import messages
 from django.db import connection, transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -453,6 +453,32 @@ def sold_books_analytics(request):
 def import_books_from_csv(request):
     store = get_object_or_404(Store, user=request.user)
 
+    context = {
+        "form": CSVUploadForm(),
+        "file_requirements": {
+            "required_fields": {
+                "title": "Назва книги",
+                "genre": "Жанр (має існувати в базі даних)",
+                "country": "Країна (має існувати в базі даних)",
+                "price": "Ціна (додатнє число)",
+                "published_year": f"Рік видання (до {2025})",
+                "language": "Мова (зі списку доступних)"
+            },
+            "optional_fields": {
+                "description": "Опис книги",
+                "quantity": "Кількість (за замовчуванням 1)",
+                "authors": "Автори (через кому)",
+                "publisher": "Видавництво",
+                "image_url": "URL зображення",
+                "delivery_option": "Варіант доставки",
+                "multiple_regions": "Регіони (через кому)",
+                "multiple_cities": "Міста (через кому)"
+            },
+            "language_choices": dict(Book.LANGUAGE_CHOICES),
+            "delivery_choices": dict(DeliverChoices.choices)
+        }
+    }
+
     if request.method == "POST":
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -460,49 +486,54 @@ def import_books_from_csv(request):
             
             try:
                 df = pd.read_excel(xlsx_file, engine='openpyxl')
+                success = True
                 
                 with transaction.atomic():
                     for _, row in df.iterrows():
+                        product, authors = create_product_from_row(row, store, request)
+                        if not product:
+                            success = False
+                            continue
 
-                        product, authors = create_product_from_row(row, store)
-                        if product:
-                            product.save()
+                        product.save()
                             
                             
-                            if authors:
-                                product.authors.set(authors)
+                        if authors:
+                            product.authors.set(authors)
                             
 
-                            delivery_option = create_delivery_option(row, product)
-                            if delivery_option:
-                                delivery_option.save()
+                        delivery_option = create_delivery_option(row, product)
+                        if delivery_option:
+                            delivery_option.save()
                                 
 
-                                regions = get_multiple_regions(row.get("multiple_regions", ""), delivery_option.country)
-                                if regions:
-                                    delivery_option.region_multiple.set(regions)
+                            regions = get_multiple_regions(row.get("multiple_regions", ""), delivery_option.country)
+                            if regions:
+                                delivery_option.region_multiple.set(regions)
                                 
-                                cities = get_multiple_cities(row.get("multiple_cities", ""), regions)
-                                if cities:
-                                    delivery_option.city_multiple.set(cities)
+                            cities = get_multiple_cities(row.get("multiple_cities", ""), regions)
+                            if cities:
+                                delivery_option.city_multiple.set(cities)
 
 
-                            image = create_book_image(row, product)
-                            if image:
-                                image.save()
+                        image = create_book_image(row, product)
+                        if image:
+                            image.save()
 
-                messages.success(request, "Файл з книгами іспішно доданий!")
-                return redirect("store:book_list")
+                if success:
+                    messages.success(request, "Файл з книгами успішно доданий!")
+                    return redirect("store:book_list")
+                else:
+                    messages.warning(request, "Деякі книги не були імпортовані через помилки в даних.")
+                    return render(request, "store/import_books.html", context)
 
             except Exception as e:
                 logger.error(f"Error importing products: {e}")
-                messages.error(request, f"Error importing products: {e}")
+                messages.error(request, f"Помилка імпорту: {e}")
                 transaction.rollback()
+                return render(request, "store/import_books.html", context)
 
-    else:
-        form = CSVUploadForm()
-
-    return render(request, "store/import_books.html", {"form": form})
+    return render(request, "store/import_books.html", context)
 
 def reset_sequence(table_name):
     with connection.cursor() as cursor:
@@ -510,20 +541,23 @@ def reset_sequence(table_name):
 
 
 
-def create_product_from_row(row, store):
+def create_product_from_row(row, store, request): 
     required_fields = ["title", "genre", "country", "price", "published_year", "language"]
     missing_fields = [field for field in required_fields if pd.isna(row.get(field))]
     
     if missing_fields:
         logger.warning(f"Skipping row due to missing fields: {missing_fields} in row: {row}")
+        messages.warning(request, f'Відсутні обов\'язкові поля: {", ".join(missing_fields)}')
         return None
 
     if not isinstance(row["price"], (int, float)) or row["price"] <= 0:
         logger.warning(f"Skipping row with invalid price (must be positive): {row}")
+        messages.warning(request, 'Помилка: Ціна має бути додатнім числом')
         return None, []
     
     if not isinstance(row["published_year"], (int, float)) or row["published_year"] > 2025:
         logger.warning(f"Skipping row with invalid published year (cannot be greater than 2025): {row}")
+        messages.warning(request, 'Ooops! Рік видавництва більше ніж 2025! Змініть щось!')
         return None, []
 
     genre = get_existing_genre(row["genre"])
@@ -562,7 +596,6 @@ def create_product_from_row(row, store):
             author, created = Author.objects.get_or_create(name=author_name)
             authors.append(author)
         
-        # Note: We'll need to set authors after saving the book
         return book, authors
 
     return book, []
