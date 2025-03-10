@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import CASCADE
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -79,7 +80,10 @@ class Book(models.Model):
         max_length=200, unique=True, blank=True, null=True, verbose_name="URL"
     )
     quantity = models.PositiveIntegerField(db_default=1, verbose_name="Quantity")
-    published_year = models.PositiveBigIntegerField( verbose_name="Рік видання")
+    published_year = models.PositiveBigIntegerField(
+        verbose_name="Рік видання",
+        validators=[MaxValueValidator(2025, message="Published year cannot be greater than 2025")]
+    )
     language = models.CharField(
         max_length=2, choices=LANGUAGE_CHOICES, verbose_name="Мова"
     )
@@ -94,7 +98,11 @@ class Book(models.Model):
     )
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        validators=[MinValueValidator(0.01, message="Price must be greater than zero")]
+    )
     genre = models.ForeignKey(Genre, verbose_name="Жанр", on_delete=models.CASCADE)
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, null=True, blank=True)
     authors = models.ManyToManyField(Author)

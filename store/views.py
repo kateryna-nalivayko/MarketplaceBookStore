@@ -518,6 +518,14 @@ def create_product_from_row(row, store):
         logger.warning(f"Skipping row due to missing fields: {missing_fields} in row: {row}")
         return None
 
+    if not isinstance(row["price"], (int, float)) or row["price"] <= 0:
+        logger.warning(f"Skipping row with invalid price (must be positive): {row}")
+        return None, []
+    
+    if not isinstance(row["published_year"], (int, float)) or row["published_year"] > 2025:
+        logger.warning(f"Skipping row with invalid published year (cannot be greater than 2025): {row}")
+        return None, []
+
     genre = get_existing_genre(row["genre"])
     country = get_existing_country(row["country"])
     publisher = Publisher.objects.filter(name=row.get("publisher")).first()
